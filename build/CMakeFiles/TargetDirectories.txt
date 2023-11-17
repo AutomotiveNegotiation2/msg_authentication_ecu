@@ -1,0 +1,5 @@
+/mnt/d/work/IITP_source/IITP_libaursa_linux_gcc/build/CMakeFiles/edit_cache.dir
+/mnt/d/work/IITP_source/IITP_libaursa_linux_gcc/build/CMakeFiles/rebuild_cache.dir
+/mnt/d/work/IITP_source/IITP_libaursa_linux_gcc/build/output/CMakeFiles/atmcrypto.dir
+/mnt/d/work/IITP_source/IITP_libaursa_linux_gcc/build/output/CMakeFiles/edit_cache.dir
+/mnt/d/work/IITP_source/IITP_libaursa_linux_gcc/build/output/CMakeFiles/rebuild_cache.dir

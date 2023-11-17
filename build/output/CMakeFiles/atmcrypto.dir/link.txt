@@ -1,0 +1,2 @@
+/usr/bin/ar qc libatmcrypto.a CMakeFiles/atmcrypto.dir/bignum.c.o CMakeFiles/atmcrypto.dir/md.c.o CMakeFiles/atmcrypto.dir/md_wrap.c.o CMakeFiles/atmcrypto.dir/rsa.c.o CMakeFiles/atmcrypto.dir/sha1.c.o CMakeFiles/atmcrypto.dir/sha2.c.o CMakeFiles/atmcrypto.dir/aursa.c.o CMakeFiles/atmcrypto.dir/aes.c.o CMakeFiles/atmcrypto.dir/camellia.c.o CMakeFiles/atmcrypto.dir/cipher.c.o CMakeFiles/atmcrypto.dir/cipher_wrap.c.o CMakeFiles/atmcrypto.dir/padlock.c.o
+/usr/bin/ranlib libatmcrypto.a
