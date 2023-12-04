@@ -231,7 +231,7 @@ static const unsigned char base64_test_enc[] =
  */
 int mbedtls_base64_self_test(int verbose)
 {
-    size_t len;
+    size_t len=0;
     const unsigned char *src;
     unsigned char buffer[128];
 
