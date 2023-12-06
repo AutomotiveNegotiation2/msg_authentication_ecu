@@ -73,7 +73,7 @@
 int mbedtls_rsa_export(mbedtls_rsa_context *ctx,
                        const mbedtls_mpi *N,
                        const mbedtls_mpi *P, const mbedtls_mpi *Q,
-                       const mbedtls_mpi *D, const mbedtls_mpi *E)
+                       const mbedtls_mpi *d, const mbedtls_mpi *e)
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
