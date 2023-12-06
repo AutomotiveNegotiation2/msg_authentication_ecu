@@ -31,7 +31,7 @@
 #include "mbedtls/error.h"
 
 #include <string.h>
-
+#include <stdio.h>
 #include "mbedtls/platform.h"
 
 #if !defined(MBEDTLS_MD5_ALT)
