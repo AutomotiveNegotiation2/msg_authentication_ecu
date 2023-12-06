@@ -105,7 +105,7 @@ exit:
 /*
  * HMAC_DRBG finish, using optional additional data (10.1.2.2)
  */
-int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
+static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
                              const unsigned char *additional,
                              size_t add_len)
 {
