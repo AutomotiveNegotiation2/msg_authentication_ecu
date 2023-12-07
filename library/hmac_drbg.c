@@ -115,22 +115,22 @@ static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
     unsigned char   K[MBEDTLS_MD_MAX_SIZE];
     int             ret         = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
 
-    for (sep[0] = 0; sep[0] < rounds; sep[0]++) {
+    for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++) {
         /* Step 1 or 4 */
-        if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0) {
+        if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0u) {
             goto exit;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                          ctx->V, md_len)) != 0) {
+                                          ctx->V, md_len)) != 0u) {
             goto exit;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                          sep, 1)) != 0) {
+                                          sep, 1u)) != 0u) {
             goto exit;
         }
-        if (rounds == 2) {
+        if (rounds == 2u) {
             if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                              additional, add_len)) != 0) {
+                                              additional, add_len)) != 0u) {
                 goto exit;
             }
         }
@@ -139,14 +139,14 @@ static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
         }
 
         /* Step 2 or 5 */
-        if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) != 0) {
+        if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) != 0u) {
             goto exit;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                          ctx->V, md_len)) != 0) {
+                                          ctx->V, md_len)) != 0u) {
             goto exit;
         }
-        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) != 0) {
+        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) != 0u) {
             goto exit;
         }
     }
