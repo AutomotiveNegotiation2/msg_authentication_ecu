@@ -556,7 +556,10 @@ exit:
     if( ret != 0 ) {
         return ret;
     }
-    return mbedtls_hmac_drbg_write_seed_file(ctx, path);
+    else
+    {
+        return mbedtls_hmac_drbg_write_seed_file(ctx, path);
+    }
 }
 #endif /* MBEDTLS_FS_IO */
 
