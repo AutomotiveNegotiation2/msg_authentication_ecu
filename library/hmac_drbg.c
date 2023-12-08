@@ -527,7 +527,7 @@ int mbedtls_hmac_drbg_update_seed_file(mbedtls_hmac_drbg_context *ctx, const cha
     unsigned char buf[MBEDTLS_HMAC_DRBG_MAX_INPUT];
     unsigned char c;
 
-    if ((f = fopen(path, "rb")) == NULL) {
+    if( (f = fopen(path, "rb")) == NULL ) {
         return MBEDTLS_ERR_HMAC_DRBG_FILE_IO_ERROR;
     }
 
@@ -535,11 +535,11 @@ int mbedtls_hmac_drbg_update_seed_file(mbedtls_hmac_drbg_context *ctx, const cha
     mbedtls_setbuf(f, NULL);
 
     n = fread(buf, 1, sizeof(buf), f);
-    if (fread(&c, 1, 1, f) != 0) {
+    if( fread(&c, 1, 1, f) != 0 ) {
         ret = MBEDTLS_ERR_HMAC_DRBG_INPUT_TOO_BIG;
         goto exit;
     }
-    if (n == 0 || ferror(f)) {
+    if( n == 0 || ferror(f )) {
         ret = MBEDTLS_ERR_HMAC_DRBG_FILE_IO_ERROR;
         goto exit;
     }
@@ -550,10 +550,10 @@ int mbedtls_hmac_drbg_update_seed_file(mbedtls_hmac_drbg_context *ctx, const cha
 
 exit:
     mbedtls_platform_zeroize(buf, sizeof(buf));
-    if (f != NULL) {
+    if( f != NULL ) {
         fclose(f);
     }
-    if (ret != 0) {
+    if( ret != 0 ) {
         return ret;
     }
     return mbedtls_hmac_drbg_write_seed_file(ctx, path);
