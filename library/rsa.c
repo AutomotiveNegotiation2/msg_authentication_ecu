@@ -114,6 +114,7 @@ int mbedtls_rsa_import(mbedtls_rsa_context *ctx,
     return 0;
 }
 
+int mbedtls_rsa_export_raw(mbedtls_rsa_context *ctx);
 int mbedtls_rsa_import_raw(mbedtls_rsa_context *ctx,
                            unsigned char const *N, size_t N_len,
                            unsigned char const *P, size_t P_len,
