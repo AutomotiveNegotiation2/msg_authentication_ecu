@@ -61,6 +61,10 @@ void mbedtls_md5_clone(mbedtls_md5_context *dst,
  */
 int mbedtls_md5_starts(mbedtls_md5_context *ctx)
 {
+    if(ctx == NULL)
+    {
+        return 0;
+    }
     ctx->total[0] = 0;
     ctx->total[1] = 0;
 
