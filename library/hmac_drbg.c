@@ -110,7 +110,7 @@ static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
                              size_t add_len)
 {
     size_t          md_len      = mbedtls_md_get_size(ctx->md_ctx.md_info);
-    unsigned char   rounds      = (additional != NULL && add_len != 0) ? 2 : 1;
+    unsigned char   rounds      = ((additional != NULL) && (add_len != 0)) ? 2 : 1;
     unsigned char   sep[1];
     unsigned char   K[MBEDTLS_MD_MAX_SIZE];
     int             ret         = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
