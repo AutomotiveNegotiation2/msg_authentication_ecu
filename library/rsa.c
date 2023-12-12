@@ -114,7 +114,45 @@ int mbedtls_rsa_import(mbedtls_rsa_context *ctx,
     return 0;
 }
 
-int mbedtls_rsa_export_raw(mbedtls_rsa_context *ctx);
+int mbedtls_rsa_export_raw(mbedtls_rsa_context *ctx)
+                           unsigned char const *N, size_t N_len,
+                           unsigned char const *P, size_t P_len,
+                           unsigned char const *Q, size_t Q_len,
+                           unsigned char const *D, size_t D_len,
+                           unsigned char const *E, size_t E_len)
+{
+    int ret = 0;
+
+    if (N != NULL) {
+        MBEDTLS_MPI_CHK(mbedtls_mpi_read_binary(&ctx->N, N, N_len));
+        ctx->len = mbedtls_mpi_size(&ctx->N);
+    }
+
+    if (P != NULL) {
+        MBEDTLS_MPI_CHK(mbedtls_mpi_read_binary(&ctx->P, P, P_len));
+    }
+
+    if (Q != NULL) {
+        MBEDTLS_MPI_CHK(mbedtls_mpi_read_binary(&ctx->Q, Q, Q_len));
+    }
+
+    if (D != NULL) {
+        MBEDTLS_MPI_CHK(mbedtls_mpi_read_binary(&ctx->D, D, D_len));
+    }
+
+    if (E != NULL) {
+        MBEDTLS_MPI_CHK(mbedtls_mpi_read_binary(&ctx->E, E, E_len));
+    }
+
+cleanup:
+
+    if (ret != 0) {
+        return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_RSA_BAD_INPUT_DATA, ret);
+    }
+
+    return 0;
+}
+
 int mbedtls_rsa_import_raw(mbedtls_rsa_context *ctx,
                            unsigned char const *N, size_t N_len,
                            unsigned char const *P, size_t P_len,
