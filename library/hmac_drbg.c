@@ -118,40 +118,40 @@ static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
     for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++) {
         /* Step 1 or 4 */
         if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0u) {
-            goto exit;
+            goto exit_err_code;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
                                           ctx->V, md_len)) != 0u) {
-            goto exit;
+            goto exit_err_code;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
                                           sep, 1u)) != 0u) {
-            goto exit;
+            goto exit_err_code;
         }
         if (rounds == 2u) {
             if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
                                               additional, add_len)) != 0u) {
-                goto exit;
+                goto exit_err_code;
             }
         }
         if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) != 0) {
-            goto exit;
+            goto exit_err_code;
         }
 
         /* Step 2 or 5 */
         if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) != 0u) {
-            goto exit;
+            goto exit_err_code;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
                                           ctx->V, md_len)) != 0u) {
-            goto exit;
+            goto exit_err_code;
         }
         if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) != 0u) {
-            goto exit;
+            goto exit_err_code;
         }
     }
 
-exit:
+exit_err_code:
     mbedtls_platform_zeroize(K, sizeof(K));
     return ret;
 }
