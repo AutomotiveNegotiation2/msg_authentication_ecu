@@ -113,7 +113,7 @@ static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
     unsigned char   rounds      = ((additional != NULL) && (add_len != 0)) ? 2 : 1;
     unsigned char   sep[2];
     unsigned char   K[MBEDTLS_MD_MAX_SIZE];
-    int             ret         = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
+    int32_t         ret         = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
 
     for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++) {
         /* Step 1 or 4 */
