@@ -378,6 +378,22 @@ int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, cons
 
         *p++ = '=';
     }
+	else if (i >= slen) {
+        C1 = *src++;
+        C2 = ((i + 1) < slen) ? *src++ : 0;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x5F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+                                          & 0x5F);
+
+        if ((i + 1) < slen) {
+            *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x5F);
+        } else {
+            *p++ = '=';
+        }
+
+        *p++ = '=';
+    }
 	
 	    for (i = 0, p = dst; i < n; i += 3) {
         C1 = *src++;
