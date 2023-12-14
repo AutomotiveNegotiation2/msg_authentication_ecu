@@ -33,6 +33,25 @@
  */
 #define MBEDTLS_SSL_ALPN
 
+/**
+ * \def MBEDTLS_ECDH_C
+ *
+ * Enable the elliptic curve Diffie-Hellman library.
+ *
+ * Module:  library/ecdh.c
+ * Caller:  library/psa_crypto.c
+ *          library/ssl_tls.c
+ *          library/ssl*_client.c
+ *          library/ssl*_server.c
+ *
+ * This module is used by the following key exchanges:
+ *      ECDHE-ECDSA, ECDHE-RSA, DHE-PSK
+ *
+ * Requires: MBEDTLS_ECP_C
+ */
+#define MBEDTLS_ECDH_C
+
+
 #if defined(MBEDTLS_SSL_CLI_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include <string.h>
