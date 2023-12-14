@@ -353,6 +353,58 @@ int at_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
     return 0;
 }
 
+int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, const unsigned char *src, size_t slen)
+{
+    size_t i, n;
+    int C1, C2, C3;
+    unsigned char *p;
+    size_t len=0;
+    const unsigned char *src;
+    unsigned char buffer[128];
+	
+    if (i < slen) {
+        C1 = *src++;
+        C2 = ((i + 1) < slen) ? *src++ : 0;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+
+        if ((i + 1) < slen) {
+            *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+        } else {
+            *p++ = '=';
+        }
+
+        *p++ = '=';
+    }
+	
+	    for (i = 0, p = dst; i < n; i += 3) {
+        C1 = *src++;
+        C2 = *src++;
+        C3 = *src++;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+    }
+
+    src = base64_test_dec;
+
+    if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 64) != 0 ||
+        memcmp(base64_test_enc, buffer, 88) != 0) {
+        if (verbose != 0) {
+            mbedtls_printf("failed\n");
+        }
+
+        return 1;
+    }
+	return 0;
+}
+
 #endif /* MBEDTLS_SELF_TEST */
 
 #endif /* MBEDTLS_BASE64_C */
