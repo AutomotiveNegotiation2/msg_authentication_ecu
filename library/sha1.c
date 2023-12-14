@@ -321,7 +321,8 @@ int mbedtls_sha1_finish(mbedtls_sha1_context *ctx,
         /* We'll need an extra block */
         memset(ctx->buffer + used, 0, 64 - used);
 
-        if ((ret = mbedtls_internal_sha1_process(ctx, ctx->buffer)) != 0) {
+        ret = mbedtls_internal_sha1_process(ctx, ctx->buffer);
+        if (ret  != 0) {
             return ret;
         }
 
