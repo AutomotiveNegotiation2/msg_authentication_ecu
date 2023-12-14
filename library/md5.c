@@ -53,7 +53,10 @@ void mbedtls_md5_free(mbedtls_md5_context *ctx)
 void mbedtls_md5_clone(mbedtls_md5_context *dst,
                        const mbedtls_md5_context *src)
 {
-    *dst = *src;
+    if(dst != NULL && src != NULL)
+    {
+        *dst = *src;
+    }
 }
 
 /*
