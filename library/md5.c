@@ -38,12 +38,17 @@
 
 void mbedtls_md5_init(mbedtls_md5_context *ctx)
 {
+    if(ctc == NULL)
+    {
+        return;
+    }
     memset(ctx, 0, sizeof(mbedtls_md5_context));
 }
 
 void mbedtls_md5_free(mbedtls_md5_context *ctx)
 {
-    if (ctx == NULL) {
+    if(ctx == NULL) 
+    {
         return;
     }
 
