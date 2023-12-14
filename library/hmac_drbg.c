@@ -109,13 +109,15 @@ static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
                              const unsigned char *additional,
                              size_t add_len)
 {
-    size_t          md_len      = mbedtls_md_get_size(ctx->md_ctx.md_info);
+    size_t          md_len      = 0u;
     unsigned char   rounds      = ((additional != NULL) && (add_len != 0)) ? 2 : 1;
     unsigned char   sep[2];
     unsigned char   K[MBEDTLS_MD_MAX_SIZE];
     int32_t         ret         = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
 
     if( (ctx != NULL) && (additional != NULL) && (add_len > 0u) ) {
+        md_len  = mbedtls_md_get_size(ctx->md_ctx.md_info);
+
         for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++) {
             /* Step 1 or 4 */
             if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0u) {
