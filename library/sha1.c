@@ -314,7 +314,7 @@ int mbedtls_sha1_finish(mbedtls_sha1_context *ctx,
 
     ctx->buffer[used++] = 0x80;
 
-    if (used <= 56) {
+    if (used < 57) {
         /* Enough room for padding + length in current block */
         memset(ctx->buffer + used, 0, 56 - used);
     } else {
