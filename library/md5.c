@@ -145,12 +145,6 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     P(local.B, local.C, local.D, local.A,  7, 22, 0xFD469501);
     P(local.A, local.B, local.C, local.D,  8,  7, 0x698098D8);
     P(local.D, local.A, local.B, local.C,  9, 12, 0x8B44F7AF);
-    P(local.C, local.D, local.A, local.B, 10, 17, 0xFFFF5BB1);
-    P(local.B, local.C, local.D, local.A, 11, 22, 0x895CD7BE);
-    P(local.A, local.B, local.C, local.D, 12,  7, 0x6B901122);
-    P(local.D, local.A, local.B, local.C, 13, 12, 0xFD987193);
-    P(local.C, local.D, local.A, local.B, 14, 17, 0xA679438E);
-    P(local.B, local.C, local.D, local.A, 15, 22, 0x49B40821);
 
 #undef F
 
