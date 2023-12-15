@@ -36,6 +36,8 @@
 
 #if !defined(MBEDTLS_MD5_ALT)
 
+#define swap(a, b) {int tmp=a; a=b; b=tmp;}
+
 void mbedtls_md5_init(mbedtls_md5_context *ctx)
 {
     if(ctc == NULL)
@@ -109,6 +111,13 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     local.X[14] = MBEDTLS_GET_UINT32_LE(data, 56);
     local.X[15] = MBEDTLS_GET_UINT32_LE(data, 60);
 
+    swap(local.X[0], local.X[1]);
+    swap(local.X[2], local.X[3]);
+    swap(local.X[4], local.X[5]);
+    swap(local.X[6], local.X[7]);
+    swap(local.X[8], local.X[9]);
+    swap(local.X[10], local.X[11]);
+    
 #define S(x, n)                                                          \
     (((x) << (n)) | (((x) & 0xFFFFFFFF) >> (32 - (n))))
 
