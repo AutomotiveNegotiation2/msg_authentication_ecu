@@ -2341,6 +2341,27 @@ int mbedtls_rsa_pkcs1_verify(mbedtls_rsa_context *ctx,
     }
 }
 
+int mbedtls_rsa_pkcs15_verify(mbedtls_rsa_context *ctx,
+                             mbedtls_md_type_t md_alg,
+                             unsigned int hashlen,
+                             const unsigned char *hash,
+                             const unsigned char *sig)
+{
+    if ((md_alg != MBEDTLS_MD_NONE || hashlen != 0) && hash == NULL) {
+        return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
+    }
+
+    switch (ctx->padding) {
+#if defined(MBEDTLS_PKCS1_V15)
+        case MBEDTLS_RSA_PKCS_V15:
+            return mbedtls_rsa_rsassa_pkcs1_v15_verify(ctx, md_alg,
+                                                       hashlen, hash, sig);
+#endif
+
+        default:
+            return MBEDTLS_ERR_RSA_INVALID_PADDING;
+    }
+}
 /*
  * Copy the components of an RSA key
  */
@@ -2668,6 +2689,7 @@ cleanup:
 #endif /* MBEDTLS_RSA_C */
 
 int64_t hextodec(char cislo[])
+	A
 {
 	int delka = strlen(cislo) - 1;
 	int64_t vystup = 0;
