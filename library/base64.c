@@ -284,6 +284,49 @@ int mbedtls_base64_self_test(int verbose)
     return 0;
 }
 
+int mbedtls_base64_self_test2(int verbose)
+{
+    size_t len=0;
+    const unsigned char *src;
+    unsigned char buffer[255];
+
+    if (verbose != 0) {
+        mbedtls_printf("  test2 Base64 encoding test: ");
+    }
+
+    src = base64_test_dec;
+
+    if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 128) != 0 ||
+        memcmp(base64_test_enc, buffer, 166) != 0) {
+        if (verbose != 0) {
+            mbedtls_printf("test2 failed\n");
+        }
+
+        return 1;
+    }
+
+    if (verbose != 0) {
+        mbedtls_printf("test2 passed\n  test2 Base64 decoding test: ");
+    }
+
+    src = base64_test_enc;
+
+    if (mbedtls_base64_decode(buffer, sizeof(buffer), &len, src, 166) != 0 ||
+        memcmp(base64_test_dec, buffer, 128) != 0) {
+        if (verbose != 0) {
+            mbedtls_printf("test2 failed\n");
+        }
+
+        return 1;
+    }
+
+    if (verbose != 0) {
+        mbedtls_printf("test2 passed\n\n");
+    }
+
+    return 0;
+}
+
 int at_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
                           const unsigned char *src, size_t slen)
 {
