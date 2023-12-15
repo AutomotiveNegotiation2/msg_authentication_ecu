@@ -35,6 +35,27 @@
  */
 #define MBEDTLS_SSL_CLI_C
 
+/**
+ * \def MBEDTLS_SSL_PROTO_TLS1_3
+ *
+ * Enable support for TLS 1.3.
+ *
+ * \note The support for TLS 1.3 is not comprehensive yet, in particular
+ *       pre-shared keys are not supported.
+ *       See docs/architecture/tls13-support.md for a description of the TLS
+ *       1.3 support that this option enables.
+ *
+ * Requires: MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ *
+ * Note: even though TLS 1.3 depends on PSA Crypto, and uses it unconditionally
+ * for most operations, if you want it to only use PSA for all crypto
+ * operations, you need to also enable MBEDTLS_USE_PSA_CRYPTO; otherwise X.509
+ * operations, and functions that are common with TLS 1.2 (record protection,
+ * running handshake hash) will still use non-PSA crypto.
+ *
+ * Uncomment this macro to enable the support for TLS 1.3.
+ */
 #define MBEDTLS_SSL_PROTO_TLS1_3
 
 /**
