@@ -85,6 +85,22 @@
  */
 #define MBEDTLS_ECDH_C
 
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 ephemeral key exchange mode.
+ *
+ * Requires: MBEDTLS_ECDH_C, MBEDTLS_X509_CRT_PARSE_C, MBEDTLS_ECDSA_C or
+ *           MBEDTLS_PKCS1_V21
+ *
+ * Comment to disable support for the ephemeral key exchange mode in TLS 1.3.
+ * If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+
+
 #if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED) || \
     defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED)
 #define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_EPHEMERAL_ENABLED
