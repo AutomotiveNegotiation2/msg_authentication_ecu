@@ -270,7 +270,7 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
     }
 
     if (left && ilen >= fill) {
-        memcpy((void *) (ctx->buffer + left), input, fill);
+        (void)memcpy((void *) (ctx->buffer + left), input, fill);
 
         if ((ret = mbedtls_internal_sha1_process(ctx, ctx->buffer)) != 0) {
             return ret;
@@ -291,7 +291,7 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
     }
 
     if (ilen > 0) {
-        memcpy((void *) (ctx->buffer + left), input, ilen);
+        (void)memcpy((void *) (ctx->buffer + left), input, ilen);
     }
 
     return 0;
