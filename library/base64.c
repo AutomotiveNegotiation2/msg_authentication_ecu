@@ -142,8 +142,16 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
         }
 
-        if (src[i] > 127) {
+        if (src[i] > 127 && src[i] < 256) {
             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+        }
+		
+		else if (src[i] > 255 && src[i] < 1024) {
+            return MBEDTLS_ERR_BASE64_INVALID_4B;
+        }
+
+        else if (src[i] > 1023) {
+            return MBEDTLS_ERR_BASE64_INVALID_4BE;
         }
 
         if (src[i] == '=') {
