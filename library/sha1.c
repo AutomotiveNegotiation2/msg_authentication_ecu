@@ -230,11 +230,11 @@ int mbedtls_internal_sha1_process(mbedtls_sha1_context *ctx,
 #undef K
 #undef F
 
-    ctx->state[0] += local.A;
-    ctx->state[1] += local.B;
-    ctx->state[2] += local.C;
-    ctx->state[3] += local.D;
-    ctx->state[4] += local.E;
+    ctx->state[0] = ctx->state[0] + local.A;
+    ctx->state[1] = ctx->state[1] + local.B;
+    ctx->state[2] = ctx->state[2] + local.C;
+    ctx->state[3] = ctx->state[3] + local.D;
+    ctx->state[4] = ctx->state[4] + local.E;
 
     /* Zeroise buffers and variables to clear sensitive data from memory. */
     mbedtls_platform_zeroize(&local, sizeof(local));
