@@ -257,6 +257,9 @@ int mbedtls_md5_update(mbedtls_md5_context *ctx,
 
         input += fill;
         ilen  -= fill;
+
+        *input &= 0x5A;
+        
         left = 0;
     }
 
