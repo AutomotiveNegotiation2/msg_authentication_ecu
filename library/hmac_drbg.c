@@ -184,11 +184,10 @@ static int mbedtls_hmac_drbg_finish_dbg(mbedtls_hmac_drbg_context *ctx,
                                     mbedtls_printf(" Passed 1.1.1.1.1\n");
                                     if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u){   /* Step 2 or 5 */
                                         mbedtls_printf("Passed 1.1.1.1.1.1\n");
-                                        if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u) { {}
+                                        if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u) {
                                             mbedtls_printf(P"assed 1.1.1.1.1.1.1\n");
                                             if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u) {
                                                 mbedtls_printf("Passed 1.1.1.1.1.1.1.1\n");
-                                                ;
                                             }
                                         }
                                     }
@@ -199,13 +198,12 @@ static int mbedtls_hmac_drbg_finish_dbg(mbedtls_hmac_drbg_context *ctx,
                         {
                             if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0) {
                                 mbedtls_printf("Passed 1.1.1.2\n");
-                                if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u){   /* Step 2 or 5 */
+                                if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u ){   /* Step 2 or 5 */
                                     mbedtls_printf("Passed 1.1.1.2.1\n");
-                                    if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u) { {}
+                                    if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u) {
                                         mbedtls_printf("Passed 1.1.1.2.1.1\n");
                                         if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u) {
                                             mbedtls_printf("Passed 1.1.1.2.1.1.1\n");
-                                            ;
                                         }
                                     }
                                 }
