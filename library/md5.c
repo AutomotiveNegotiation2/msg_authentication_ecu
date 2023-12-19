@@ -289,13 +289,17 @@ int mbedtls_md5_finish(mbedtls_md5_context *ctx,
     uint32_t used;
     uint32_t high, low;
 
+    if(ctx == NULL)
+    {
+        return -1;
+    }
     /*
      * Add padding: 0x80 then 0x00 until 8 bytes remain for the length
      */
     used = ctx->total[0] & 0x3F;
 
     ctx->buffer[used++] = 0x80;
-
+    
     if (used <= 56) {
         /* Enough room for padding + length in current block */
         memset(ctx->buffer + used, 0, 56 - used);
