@@ -160,6 +160,12 @@ int mbedtls_rsa_import_update(mbedtls_rsa_context *ctx,
     return 0;
 }
 
+int mbedtls_rsa_import_finish(mbedtls_rsa_context *ctx)
+{
+    int mbedtls_rsa_import(mbedtls_rsa_context *ctx);
+}
+
+
 
 int mbedtls_rsa_export_raw(mbedtls_rsa_context *ctx)
                            unsigned char const *N, size_t N_len,
