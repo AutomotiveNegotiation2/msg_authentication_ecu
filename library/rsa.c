@@ -118,6 +118,18 @@ int mbedtls_rsa_import(mbedtls_rsa_context *ctx,
     return 0;
 }
 
+int mbedtls_rsa_import_start(mbedtls_rsa_context *ctx,
+{
+    int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+
+    if (N != NULL)
+    {
+        ctx->len = mbedtls_mpi_size(&ctx->N);
+    }
+
+    return 0;
+}
+
 int mbedtls_rsa_export_raw(mbedtls_rsa_context *ctx)
                            unsigned char const *N, size_t N_len,
                            unsigned char const *P, size_t P_len,
