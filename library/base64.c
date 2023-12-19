@@ -460,6 +460,9 @@ int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, cons
             *p++ = '=';
         }
 
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 3) & 0x6F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 4) << 5) + (C2 >> 5))
+                                          & 0x6F);
         *p++ = '=';
     }
 	
