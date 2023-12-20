@@ -430,7 +430,7 @@ int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, cons
     unsigned char *p;
     size_t len=0;
     const unsigned char *src;
-    unsigned char buffer[128];
+    unsigned char buffer[256];
 	
     if (i < slen) {
         C1 = *src++;
@@ -486,8 +486,8 @@ int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, cons
 
     src = base64_test_dec;
 
-    if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 64) != 0 ||
-        memcmp(base64_test_enc, buffer, 88) != 0) {
+    if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 128) != 0 ||
+        memcmp(base64_test_enc, buffer, 256) != 0) {
         if (verbose != 0) {
             mbedtls_printf("failed\n");
         }
