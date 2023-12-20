@@ -397,6 +397,9 @@ int mbedtls_rsa_complete(mbedtls_rsa_context *ctx)
     {
         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
     }
+    else {
+        return 0;
+    }
 
     /*
      * Step 1: Deduce N if P, Q are provided.
