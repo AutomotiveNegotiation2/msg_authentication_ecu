@@ -187,6 +187,7 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
     if (dst == NULL || dlen < n) {
         *olen = n;
+		mbedtls_printf("Buffer too small\n");
         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
     }
 
@@ -217,6 +218,7 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
     *olen = p - dst;
 
+	mbedtls_printf("decode success!\n");
     return 0;
 }
 
