@@ -54,6 +54,9 @@
 #define SIG_RSA_SHA256 11
 #define SIG_RSA_SHA384 12
 #define SIG_RSA_SHA512 13
+#define SIG_RSA_SHA256_384 14
+#define SIG_RSA_SHA256_512 15
+
 
 #define RSA_PUBLIC      0
 #define RSA_PRIVATE     1
