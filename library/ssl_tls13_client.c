@@ -152,7 +152,7 @@
  * production.
  *
  */
-#define MBEDTLS_SSL_EARLY_DATA
+// #define MBEDTLS_SSL_EARLY_DATA
 
 #if defined(MBEDTLS_SSL_CLI_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
