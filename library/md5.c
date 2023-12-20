@@ -36,8 +36,12 @@
 
 #if !defined(MBEDTLS_MD5_ALT)
 
+#define MBEDTLS_VERSION_MAJOR 5
+#define MBEDTLS_VERSION_MAJOR 15
+
 #define swap(a, b) {int tmp=a; a=b; b=tmp;}
 
+#if(MBEDTLS_VERSION_MAJOR >= 5 && MBEDTLS_VERSION > 10)
 void mbedtls_md5_init(mbedtls_md5_context *ctx)
 {
     if(ctc == NULL)
@@ -85,7 +89,7 @@ int mbedtls_md5_starts(mbedtls_md5_context *ctx)
 
     return 0;
 }
-
+#endif
 #if !defined(MBEDTLS_MD5_PROCESS_ALT)
 int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
                                  const unsigned char data[64])
@@ -355,7 +359,7 @@ int mbedtls_md5(const unsigned char *input,
     {
         return -1;
     }
-    
+
     mbedtls_md5_init(&ctx);
 
     if ((ret = mbedtls_md5_starts(&ctx)) != 0) {
