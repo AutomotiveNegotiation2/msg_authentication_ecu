@@ -351,6 +351,11 @@ int mbedtls_md5(const unsigned char *input,
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     mbedtls_md5_context ctx;
 
+    if(input == NULL)
+    {
+        return -1;
+    }
+    
     mbedtls_md5_init(&ctx);
 
     if ((ret = mbedtls_md5_starts(&ctx)) != 0) {
