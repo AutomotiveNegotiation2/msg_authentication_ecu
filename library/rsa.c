@@ -900,9 +900,13 @@ int mbedtls_rsa_check_pub_priv(const mbedtls_rsa_context *pub,
 int mbedtls_rsa_extract_public(mbedtls_rsa_context *ctx,
                        const unsigned char *input,
                        unsigned char *output)
-                       {
-                        
-                       }
+{
+    int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+    size_t olen;
+    mbedtls_mpi T;
+
+    return ret;                        
+}
 
 int mbedtls_rsa_public(mbedtls_rsa_context *ctx,
                        const unsigned char *input,
