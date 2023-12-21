@@ -239,6 +239,10 @@ int mbedtls_md5_update(mbedtls_md5_context *ctx,
     size_t fill;
     uint32_t left;
 
+    if(ctx == NULL)
+    {
+        return -1;
+    }
     if (ilen == 0) {
         return 0;
     }
