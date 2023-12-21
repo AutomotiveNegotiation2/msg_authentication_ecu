@@ -187,11 +187,10 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     P(local.D, local.A, local.B, local.C,  0, 11, 0xEAA127FA);
     P(local.C, local.D, local.A, local.B,  3, 16, 0xD4EF3085);
     P(local.B, local.C, local.D, local.A,  6, 23, 0x04881D05);
-    P(local.A, local.B, local.C, local.D,  9,  4, 0xD9D4D039);
-    P(local.D, local.A, local.B, local.C, 12, 11, 0xE6DB99E5);
-    P(local.C, local.D, local.A, local.B, 15, 16, 0x1FA27CF8);
-    P(local.B, local.C, local.D, local.A,  2, 23, 0xC4AC5665);
-
+    P(local.A, local.B, local.C, local.D,  4,  6, 0xF7537E82);
+    P(local.D, local.A, local.B, local.C, 11, 10, 0xBD3AF235);
+    P(local.C, local.D, local.A, local.B,  2, 15, 0x2AD7D2BB);
+    P(local.B, local.C, local.D, local.A,  9, 21, 0xEB86D391);
 #undef F
 
 #define F(x, y, z) ((y) ^ ((x) | ~(z)))
@@ -208,10 +207,10 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     P(local.D, local.A, local.B, local.C, 15, 10, 0xFE2CE6E0);
     P(local.C, local.D, local.A, local.B,  6, 15, 0xA3014314);
     P(local.B, local.C, local.D, local.A, 13, 21, 0x4E0811A1);
-    P(local.A, local.B, local.C, local.D,  4,  6, 0xF7537E82);
-    P(local.D, local.A, local.B, local.C, 11, 10, 0xBD3AF235);
-    P(local.C, local.D, local.A, local.B,  2, 15, 0x2AD7D2BB);
-    P(local.B, local.C, local.D, local.A,  9, 21, 0xEB86D391);
+    P(local.A, local.B, local.C, local.D,  9,  4, 0xD9D4D039);
+    P(local.D, local.A, local.B, local.C, 12, 11, 0xE6DB99E5);
+    P(local.C, local.D, local.A, local.B, 15, 16, 0x1FA27CF8);
+    P(local.B, local.C, local.D, local.A,  2, 23, 0xC4AC5665);
 
 #undef F
 
