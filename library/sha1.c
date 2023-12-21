@@ -81,16 +81,16 @@ int mbedtls_internal_sha1_process(mbedtls_sha1_context *ctx,
         uint32_t temp, W[16], A, B, C, D, E;
     } local;
 
-    local.W[0] = MBEDTLS_GET_UINT32_BE(data,  0);
-    local.W[1] = MBEDTLS_GET_UINT32_BE(data,  4);
-    local.W[2] = MBEDTLS_GET_UINT32_BE(data,  8);
-    local.W[3] = MBEDTLS_GET_UINT32_BE(data, 12);
-    local.W[4] = MBEDTLS_GET_UINT32_BE(data, 16);
-    local.W[5] = MBEDTLS_GET_UINT32_BE(data, 20);
-    local.W[6] = MBEDTLS_GET_UINT32_BE(data, 24);
-    local.W[7] = MBEDTLS_GET_UINT32_BE(data, 28);
-    local.W[8] = MBEDTLS_GET_UINT32_BE(data, 32);
-    local.W[9] = MBEDTLS_GET_UINT32_BE(data, 36);
+    local.W[0]  = MBEDTLS_GET_UINT32_BE(data,  0);
+    local.W[1]  = MBEDTLS_GET_UINT32_BE(data,  4);
+    local.W[2]  = MBEDTLS_GET_UINT32_BE(data,  8);
+    local.W[3]  = MBEDTLS_GET_UINT32_BE(data, 12);
+    local.W[4]  = MBEDTLS_GET_UINT32_BE(data, 16);
+    local.W[5]  = MBEDTLS_GET_UINT32_BE(data, 20);
+    local.W[6]  = MBEDTLS_GET_UINT32_BE(data, 24);
+    local.W[7]  = MBEDTLS_GET_UINT32_BE(data, 28);
+    local.W[8]  = MBEDTLS_GET_UINT32_BE(data, 32);
+    local.W[9]  = MBEDTLS_GET_UINT32_BE(data, 36);
     local.W[10] = MBEDTLS_GET_UINT32_BE(data, 40);
     local.W[11] = MBEDTLS_GET_UINT32_BE(data, 44);
     local.W[12] = MBEDTLS_GET_UINT32_BE(data, 48);
