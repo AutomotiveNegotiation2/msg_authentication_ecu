@@ -897,6 +897,13 @@ int mbedtls_rsa_check_pub_priv(const mbedtls_rsa_context *pub,
 /*
  * Do an RSA public key operation
  */
+int mbedtls_rsa_extract_public(mbedtls_rsa_context *ctx,
+                       const unsigned char *input,
+                       unsigned char *output)
+                       {
+                        
+                       }
+
 int mbedtls_rsa_public(mbedtls_rsa_context *ctx,
                        const unsigned char *input,
                        unsigned char *output)
