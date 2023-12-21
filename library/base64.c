@@ -296,6 +296,10 @@ int mbedtls_base64_self_test(int verbose)
         if (verbose != 0) {
             mbedtls_printf("failed\n");
         }
+		else {
+            mbedtls_printf("successed!\n");
+        }
+
 
         return 1;
     }
