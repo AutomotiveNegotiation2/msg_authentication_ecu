@@ -370,18 +370,17 @@ int mbedtls_sha1(const unsigned char *input,
     mbedtls_sha1_init(&ctx);
 
     if ((ret = mbedtls_sha1_starts(&ctx)) != 0) {
-        goto exit;
+        break;
     }
 
     if ((ret = mbedtls_sha1_update(&ctx, input, ilen)) != 0) {
-        goto exit;
+        break;
     }
 
     if ((ret = mbedtls_sha1_finish(&ctx, output)) != 0) {
-        goto exit;
+        break;
     }
 
-exit:
     mbedtls_sha1_free(&ctx);
 
     return ret;
