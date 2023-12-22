@@ -205,6 +205,7 @@ static int mbedtls_hmac_drbg_finish_dbg(mbedtls_hmac_drbg_context *ctx,
                                         if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u) {
                                             mbedtls_printf("Passed 1.1.1.2.1.1.1\n");
                                         }
+                                        mbedtls_printf("Passed 1.1.1.2.1.1.2\n");
                                     }
                                 }
                             }
