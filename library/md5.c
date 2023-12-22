@@ -255,7 +255,7 @@ int mbedtls_md5_update(mbedtls_md5_context *ctx,
     if (ctx->total[0] < (uint32_t) ilen) {
         ctx->total[1]++;
     }
-
+#ifdef USE_OS_MBED
     if (left && ilen >= fill) {
         memcpy((void *) (ctx->buffer + left), input, fill);
         if ((ret = mbedtls_internal_md5_process(ctx, ctx->buffer)) != 0) {
@@ -269,7 +269,7 @@ int mbedtls_md5_update(mbedtls_md5_context *ctx,
         
         left = 0;
     }
-
+#endif
     while (ilen >= 64) {
         if ((ret = mbedtls_internal_md5_process(ctx, input)) != 0) {
             return ret;
