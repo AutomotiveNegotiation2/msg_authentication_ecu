@@ -106,7 +106,7 @@ int mbedtls_internal_sha1_process(mbedtls_sha1_context *ctx,
                      local.W[((t) -  8) & 0x0fU] ^      \
                      local.W[((t) - 14) & 0x0fU] ^      \
                      local.W[(t)        & 0x0fU],       \
-        (local.W[(t) & 0x0F] = S(local.temp, 1))        \
+        (local.W[(t) & 0x0fU] = S(local.temp, 1))        \
     )
 
 #define P(a, b, c, d, e, x)                             \
