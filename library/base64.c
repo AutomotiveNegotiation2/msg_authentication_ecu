@@ -416,6 +416,21 @@ int at_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
         *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
     }
 
+    n = (slen / 9) * 9;
+
+    for (i = 0, p = dst; i < n; i += 9) {
+        C1 = *src++;
+        C2 = *src++;
+        C3 = *src++;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+    }
+
     if (i < slen) {
         C1 = *src++;
         C2 = ((i + 1) < slen) ? *src++ : 0;
