@@ -673,7 +673,10 @@ int mbedtls_rsa_set_padding(mbedtls_rsa_context *ctx, int padding,
  */
 int mbedtls_rsa_get_padding_mode(const mbedtls_rsa_context *ctx)
 {
-    return ctx->padding;
+    int ret = 0;
+
+    ret = ctx->padding;
+    return ret;
 }
 
 /*
