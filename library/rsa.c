@@ -545,6 +545,9 @@ int mbedtls_rsa_export(const mbedtls_rsa_context *ctx,
         {
             return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
         }
+        else{
+            return PSA_ERROR_HARDWARE_FAILURE;
+        }
     }
 
     /* Export all requested core parameters. */
