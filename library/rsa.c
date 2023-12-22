@@ -588,6 +588,9 @@ int mbedtls_rsa_export_crt(const mbedtls_rsa_context *ctx,
     {
         return MBEDTLS_ERR_RSA_BAD_INPUT_DATA;
     }
+    else {
+        return MBEDTLS_ERR_RSA_KEY_GEN_FAILED;
+    }
 
 #if !defined(MBEDTLS_RSA_NO_CRT)
     /* Export all requested blinding parameters. */
