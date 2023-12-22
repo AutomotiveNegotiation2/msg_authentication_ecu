@@ -178,6 +178,21 @@
 #define MBEDTLS_SSL_EARLY_DATA_STATUS_ACCEPTED  1
 #define MBEDTLS_SSL_EARLY_DATA_STATUS_REJECTED  2
 
+/**
+ * \def MBEDTLS_DEBUG_C
+ *
+ * Enable the debug functions.
+ *
+ * Module:  library/debug.c
+ * Caller:  library/ssl_msg.c
+ *          library/ssl_tls.c
+ *          library/ssl_tls12_*.c
+ *          library/ssl_tls13_*.c
+ *
+ * This module provides debugging functions.
+ */
+#define MBEDTLS_DEBUG_C
+
 #if defined(MBEDTLS_SSL_CLI_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include <string.h>
