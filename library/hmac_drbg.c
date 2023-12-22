@@ -195,8 +195,7 @@ static int mbedtls_hmac_drbg_finish_dbg(mbedtls_hmac_drbg_context *ctx,
                                 }
                             }
                         }
-                        else
-                        {
+                        else {
                             if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0) {
                                 mbedtls_printf("Passed 1.1.1.2\n");
                                 if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u ){   /* Step 2 or 5 */
