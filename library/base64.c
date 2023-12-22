@@ -55,8 +55,15 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
     }
 
-    n *= 4;
-
+	if(BASE64_SIZE_T_MAX > 0x08)
+	{
+		n *= 2;
+	}
+	else
+	{
+		n *= 4;
+	}
+	
     if ((dlen < n + 1) || (NULL == dst)) {
         *olen = n + 1;
         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
