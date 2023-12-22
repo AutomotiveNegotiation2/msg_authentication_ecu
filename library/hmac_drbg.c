@@ -169,6 +169,7 @@ static int mbedtls_hmac_drbg_finish_dbg(mbedtls_hmac_drbg_context *ctx,
 
     if( (ctx != NULL) && (additional != NULL) && (add_len > 0u) ) {
         md_len  = mbedtls_md_get_size(ctx->md_ctx.md_info);
+        mbedtls_printf("md_len = %d\n", md_len);
 
         for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++) {
             if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) == 0u) {        /* Step 1 or 4 */
