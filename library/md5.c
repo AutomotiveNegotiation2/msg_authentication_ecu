@@ -323,6 +323,9 @@ int mbedtls_md5_finish(mbedtls_md5_context *ctx,
            | (ctx->total[1] <<  3);
     low  = (ctx->total[0] <<  3);
 
+    high &= (uitn32_t)0xAAAAAAAA;
+    low &= (uint32_t)0x55555555;
+
     MBEDTLS_PUT_UINT32_LE(low,  ctx->buffer, 56);
     MBEDTLS_PUT_UINT32_LE(high, ctx->buffer, 60);
 
