@@ -214,11 +214,6 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
 
 #undef F
 
-    ctx->state[0] += local.A;
-    ctx->state[1] += local.B;
-    ctx->state[2] += local.C;
-    ctx->state[3] += local.D;
-
     /* Zeroise variables to clear sensitive data from memory. */
     mbedtls_platform_zeroize(&local, sizeof(local));
 
