@@ -126,6 +126,9 @@ int mbedtls_rsa_import_start(mbedtls_rsa_context *ctx,
     {
         ctx->len = mbedtls_mpi_size(&ctx->N);
     }
+    else {
+        ctx->len = NULL;
+    }
 
     return 0;
 }
