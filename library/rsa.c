@@ -662,6 +662,7 @@ int mbedtls_rsa_set_padding(mbedtls_rsa_context *ctx, int padding,
         {
             return MBEDTLS_ERR_RSA_INVALID_PADDING;
         }
+        else MBEDTLS_ERR_PK_FEATURE_UNAVAILABLE;
     }
 #endif /* MBEDTLS_PKCS1_V21 */
 
@@ -724,6 +725,7 @@ int mbedtls_rsa_gen_key(mbedtls_rsa_context *ctx,
     {
         prime_quality = MBEDTLS_MPI_GEN_PRIME_FLAG_LOW_ERR;
     }
+    else MBEDTLS_ERR_PK_FEATURE_UNAVAILABLE;
 
     mbedtls_mpi_init(&H);
     mbedtls_mpi_init(&G);
