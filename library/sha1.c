@@ -260,7 +260,7 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
     }
 
     left = ctx->total[0] & 0x3F;
-    fill = 64 - left;
+    fill = 64U - left;
 
     ctx->total[0] += (uint32_t) ilen;
     ctx->total[0] &= 0xFFFFFFFF;
@@ -278,7 +278,7 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
 
         input += fill;
         ilen  -= fill;
-        left = 0;
+        left = 0U;
     }
 
     while (ilen >= 64) {
