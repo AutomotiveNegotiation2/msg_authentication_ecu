@@ -230,6 +230,29 @@
  */
 //#define MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
 
+#if defined(MBEDTLS_PLATFORM_MS_TIME_TYPE_MACRO)
+typedef MBEDTLS_PLATFORM_MS_TIME_TYPE_MACRO mbedtls_ms_time_t;
+#else
+#include <stdint.h>
+#include <inttypes.h>
+typedef int64_t mbedtls_ms_time_t;
+#endif /* MBEDTLS_PLATFORM_MS_TIME_TYPE_MACRO */
+
+/**
+ * \brief   Get time in milliseconds.
+ *
+ * \return Monotonically-increasing current time in milliseconds.
+ *
+ * \note Define MBEDTLS_PLATFORM_MS_TIME_ALT to be able to provide an
+ *       alternative implementation
+ *
+ * \warning This function returns a monotonically-increasing time value from a
+ *          start time that will differ from platform to platform, and possibly
+ *          from run to run of the process.
+ *
+ */
+mbedtls_ms_time_t mbedtls_ms_time(void);
+
 #if defined(MBEDTLS_SSL_CLI_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include <string.h>
