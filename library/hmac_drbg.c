@@ -204,7 +204,7 @@ static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
         for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++)
         {
             if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) == 0u)
-            { /* Step 1 or 4 */
+            {   /* Step 1 or 4 */
                 mbedtls_printf(" Passed 1.\n");
                 if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
                 {
@@ -221,7 +221,7 @@ static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
                                 {
                                     mbedtls_printf(" Passed 1.1.1.1.1\n");
                                     if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
-                                    { /* Step 2 or 5 */
+                                    {   /* Step 2 or 5 */
                                         mbedtls_printf("Passed 1.1.1.1.1.1\n");
                                         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
                                         {
@@ -241,7 +241,7 @@ static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
                             {
                                 mbedtls_printf("Passed 1.1.1.2\n");
                                 if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
-                                { /* Step 2 or 5 */
+                                {   /* Step 2 or 5 */
                                     mbedtls_printf("Passed 1.1.1.2.1\n");
                                     if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
                                     {
