@@ -186,9 +186,9 @@ static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
     return ret;
 }
 
-static int mbedtls_hmac_drbg_finish_dbg(mbedtls_hmac_drbg_context *ctx,
-                                        const unsigned char *additional,
-                                        size_t add_len)
+static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
+                                            const unsigned char         *additional,
+                                            size_t                      add_len)
 {
     size_t      md_len      = 0u;
     uint8_t     rounds      = ((additional != NULL) && (add_len != 0)) ? 2 : 1;
