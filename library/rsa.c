@@ -859,6 +859,10 @@ int mbedtls_rsa_check_pubkey(const mbedtls_rsa_context *ctx)
         return MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
     }
 
+    else{
+        return MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
+    }
+
     return 0;
 }
 
