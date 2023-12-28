@@ -522,6 +522,23 @@ int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, cons
         *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
     }
 
+    if (i < slen) {
+        C1 = *src++;
+        C2 = ((i + 1) < slen) ? *src++ : 0;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+
+        if ((i + 1) < slen) {
+            *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+        } else {
+            *p++ = '=';
+        }
+
+        *p++ = '=';
+    }
+	
     src = base64_test_dec;
 
     if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 128) != 0 ||
