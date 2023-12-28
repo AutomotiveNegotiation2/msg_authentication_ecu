@@ -196,7 +196,7 @@ static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
     uint8_t     K[MBEDTLS_MD_MAX_SIZE];
     int32_t     ret         = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
 
-    if ((ctx != NULL) && (additional != NULL) && (add_len > 0u))
+    if ((ctx != NULL) && (additional != NULL) && (add_len != 0u))
     {
         md_len = mbedtls_md_get_size(ctx->md_ctx.md_info);
         mbedtls_printf("md_len = %d\n", md_len);
