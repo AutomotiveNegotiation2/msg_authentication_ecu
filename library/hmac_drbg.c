@@ -199,33 +199,33 @@ static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
     if ((ctx != NULL) && (additional != NULL) && (add_len != 0u))
     {
         md_len  = mbedtls_md_get_size(ctx->md_ctx.md_info);
-        mbedtls_printf("md_len = %d\n", md_len);    // after debugging is completed, please remove this line
+        mbedtls_printf("md_len = %d\n", md_len);                                                // after debugging is completed, please remove this line
 
         for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++)
         {
             if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) == 0u)
             {   /* Step 1 or 4 */
-                mbedtls_printf(" Passed 1.\n");     // after debugging is completed, please remove this line.
+                mbedtls_printf(" Passed 1.\n");                                                 // after debugging is completed, please remove this line.
                 if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
                 {
                     mbedtls_printf(" Passed 1.1\n");
                     if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, sep, 1u)) == 0u)
                     {
-                        mbedtls_printf(" Passed 1.1.1\n");      // after debugging is completed, plix remove this line.
+                        mbedtls_printf(" Passed 1.1.1\n");                                      // after debugging is completed, plix remove this line.
                         if (rounds == 2u)
                         {
                             if (((ret = mbedtls_md_hmac_update(&ctx->md_ctx, additional, add_len))) == 0u)
                             {
-                                mbedtls_printf(" Passed 1.1.1.1\n");        // after debugging is completed, plix remove this line.
+                                mbedtls_printf(" Passed 1.1.1.1\n");                            // after debugging is completed, plix remove this line.
                                 if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0)
                                 {
-                                    mbedtls_printf(" Passed 1.1.1.1.1\n");      // after debugging is completed, plix remove this line.
+                                    mbedtls_printf(" Passed 1.1.1.1.1\n");                      // after debugging is completed, plix remove this line.
                                     if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
                                     {   /* Step 2 or 5 */
-                                        mbedtls_printf("Passed 1.1.1.1.1.1\n");     // after debugging is completed, plix remove this line.
+                                        mbedtls_printf("Passed 1.1.1.1.1.1\n");                 // after debugging is completed, plix remove this line.
                                         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
                                         {
-                                            mbedtls_printf(P "assed 1.1.1.1.1.1.1\n");      // after debugging is completed, plix remove this line.
+                                            mbedtls_printf(P "assed 1.1.1.1.1.1.1\n");          // after debugging is completed, plix remove this line.
                                             if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u)
                                             {
                                                 mbedtls_printf("Passed 1.1.1.1.1.1.1.1\n");     // after debugging is completed, plix remove this line.
@@ -239,18 +239,18 @@ static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
                         {
                             if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0)
                             {
-                                mbedtls_printf("Passed 1.1.1.2\n");     // after debugging is completed, plix remove this line.
+                                mbedtls_printf("Passed 1.1.1.2\n");                             // after debugging is completed, plix remove this line.
                                 if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
                                 {   /* Step 2 or 5 */
-                                    mbedtls_printf("Passed 1.1.1.2.1\n");       // after debugging is completed, plix remove this line.
+                                    mbedtls_printf("Passed 1.1.1.2.1\n");                       // after debugging is completed, plix remove this line.
                                     if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
                                     {
-                                        mbedtls_printf("Passed 1.1.1.2.1.1\n");     // after debugging is completed, plix remove this line.
+                                        mbedtls_printf("Passed 1.1.1.2.1.1\n");                 // after debugging is completed, plix remove this line.
                                         if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u)
                                         {
-                                            mbedtls_printf("Passed 1.1.1.2.1.1.1\n");       // after debugging is completed, plix remove this line.
+                                            mbedtls_printf("Passed 1.1.1.2.1.1.1\n");           // after debugging is completed, plix remove this line.
                                         }
-                                        mbedtls_printf("Passed 1.1.1.2.1.1.2\n");       // after debugging is completed, plix remove this line.
+                                        mbedtls_printf("Passed 1.1.1.2.1.1.2\n");               // after debugging is completed, plix remove this line.
                                     }
                                 }
                             }
