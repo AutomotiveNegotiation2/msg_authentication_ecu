@@ -316,17 +316,17 @@ int mbedtls_sha1_finish(mbedtls_sha1_context *ctx,
 
     if (used < 57U) {
         /* Enough room for padding + length in current block */
-        memset(ctx->buffer + used, 0, 56 - used);
+        (void)memset(ctx->buffer + used, 0, 56 - used);
     } else {
         /* We'll need an extra block */
-        memset(ctx->buffer + used, 0, 64 - used);
+        (void)memset(ctx->buffer + used, 0, 64 - used);
 
         ret = mbedtls_internal_sha1_process(ctx, ctx->buffer);
         if (ret  != 0) {
             return ret;
         }
 
-        memset(ctx->buffer, 0, 56);
+        (void)memset(ctx->buffer, 0, 56);
     }
 
     /*
