@@ -878,18 +878,6 @@ int mbedtls_rsa_check_privkey(const mbedtls_rsa_context *ctx)
     {
         return MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
     }
-    else {
-        ;
-    }
-
-#if !defined(MBEDTLS_RSA_NO_CRT)
-    else if (mbedtls_rsa_validate_crt(&ctx->P, &ctx->Q, &ctx->D,
-                                      &ctx->DP, &ctx->DQ, &ctx->QP) != 0)
-    {
-        return MBEDTLS_ERR_RSA_KEY_CHECK_FAILED;
-    }
-#endif
-
     return 0;
 }
 
