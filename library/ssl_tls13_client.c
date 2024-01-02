@@ -2472,6 +2472,18 @@ static int ssl_tls13_process_encrypted_extensions(mbedtls_ssl_context *ssl)
 #if defined(MBEDTLS_SSL_EARLY_DATA)
     if (ssl->handshake->received_extensions &
         MBEDTLS_SSL_EXT_MASK(EARLY_DATA)) {
+
+        if ((!mbedtls_ssl_tls13_key_exchange_mode_with_psk(ssl)) ||
+            handshake->selected_identity != 0 ||
+            handshake->ciphersuite_info->id !=
+            ssl->session_negotiate->ciphersuite) {
+
+            MBEDTLS_SSL_PEND_FATAL_ALERT(
+                MBEDTLS_SSL_ALERT_MSG_ILLEGAL_PARAMETER,
+                MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER);
+            return MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER;
+        }
+            
         ssl->early_data_status = MBEDTLS_SSL_EARLY_DATA_STATUS_ACCEPTED;
     }
 #endif
