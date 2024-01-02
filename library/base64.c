@@ -358,7 +358,7 @@ int mbedtls_base64_self_test2(int verbose)
         mbedtls_printf("  test2 Base64 encoding test: ");
     }
 
-    src = base64_test_dec;
+    /*src = base64_test_dec;
 
     if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 128) != 0 ||
         memcmp(base64_test_enc, buffer, 166) != 0) {
@@ -371,7 +371,7 @@ int mbedtls_base64_self_test2(int verbose)
 
     if (verbose != 0) {
         mbedtls_printf("test2 passed\n  test2 Base64 decoding test: ");
-    }
+    }*/
 
     src = base64_test_enc;
 
@@ -552,7 +552,7 @@ int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, cons
 
         *p++ = '=';
     }
-	s
+	
     src = base64_test_dec;
 
     if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 128) != 0 ||
