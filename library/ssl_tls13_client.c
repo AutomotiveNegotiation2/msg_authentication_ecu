@@ -3022,6 +3022,12 @@ static int ssl_tls13_parse_new_session_ticket(mbedtls_ssl_context *ssl,
                           ("ticket_lifetime: %u",
                            (unsigned int) session->ticket_lifetime));
 
+    if (session->ticket_lifetime >
+        MBEDTLS_SSL_TLS1_3_MAX_ALLOWED_TICKET_LIFETIME) {
+        MBEDTLS_SSL_DEBUG_MSG(3, ("ticket_lifetime exceeds 7 days."));
+        return MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER;
+    }
+
     session->ticket_age_add = MBEDTLS_GET_UINT32_BE(p, 4);
     MBEDTLS_SSL_DEBUG_MSG(3,
                           ("ticket_age_add: %u",
