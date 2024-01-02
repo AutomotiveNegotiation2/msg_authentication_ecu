@@ -38,7 +38,7 @@
 
 void mbedtls_sha1_init(mbedtls_sha1_context *ctx)
 {
-    memset(ctx, 0, sizeof(mbedtls_sha1_context));
+    (void)memset(ctx, 0, sizeof(mbedtls_sha1_context));
 }
 
 void mbedtls_sha1_free(mbedtls_sha1_context *ctx)
@@ -437,7 +437,7 @@ int mbedtls_sha1_self_test(int verbose)
         }
 
         if (i == 2) {
-            memset(buf, 'a', buflen = 1000);
+            (void)memset(buf, 'a', buflen = 1000);
 
             for (j = 0; j < 1000; j++) {
                 ret = mbedtls_sha1_update(&ctx, buf, buflen);
