@@ -2473,6 +2473,33 @@ static int ssl_tls13_process_encrypted_extensions(mbedtls_ssl_context *ssl)
     if (ssl->handshake->received_extensions &
         MBEDTLS_SSL_EXT_MASK(EARLY_DATA)) {
 
+ /* RFC8446 4.2.11
+         * If the server supplies an "early_data" extension, the
+         * client MUST verify that the server's selected_identity
+         * is 0. If any other value is returned, the client MUST
+         * abort the handshake with an "illegal_parameter" alert.
+         *
+         * RFC 8446 4.2.10
+         * In order to accept early data, the server MUST have accepted a PSK
+         * cipher suite and selected the first key offered in the client's
+         * "pre_shared_key" extension. In addition, it MUST verify that the
+         * following values are the same as those associated with the
+         * selected PSK:
+         * - The TLS version number
+         * - The selected cipher suite
+         * - The selected ALPN [RFC7301] protocol, if any
+         *
+         * The server has sent an early data extension in its Encrypted
+         * Extension message thus accepted to receive early data. We
+         * check here that the additional constraints on the handshake
+         * parameters, when early data are exchanged, are met,
+         * namely:
+         * - a PSK has been selected for the handshake
+         * - the selected PSK for the handshake was the first one proposed
+         *   by the client.
+         * - the selected ciphersuite for the handshake is the ciphersuite
+         *   associated with the selected PSK.
+         */
         if ((!mbedtls_ssl_tls13_key_exchange_mode_with_psk(ssl)) ||
             handshake->selected_identity != 0 ||
             handshake->ciphersuite_info->id !=
