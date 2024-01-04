@@ -667,7 +667,7 @@ int mbedtls_x509write_crt_pem(mbedtls_x509write_cert *crt,
         return ret;
     }
 
-    return 0;
+    return 200;
 }
 #endif /* MBEDTLS_PEM_WRITE_C */
 
