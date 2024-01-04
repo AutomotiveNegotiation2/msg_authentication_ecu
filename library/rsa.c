@@ -1190,6 +1190,8 @@ int mbedtls_rsa_private(mbedtls_rsa_context *ctx,
     /*
      * DQ_blind = ( Q - 1 ) * R + DQ
      */
+    MBEDTLS_MPI_CHK(mbedtls_mpi_fill_random(&R, f_rng, p_rng));
+    `
     MBEDTLS_MPI_CHK(mbedtls_mpi_fill_random(&R, RSA_EXPONENT_BLINDING,
                                             f_rng, p_rng));
     MBEDTLS_MPI_CHK(mbedtls_mpi_mul_mpi(&DQ_blind, &Q1, &R));
