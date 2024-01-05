@@ -513,12 +513,18 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
     X[3] ^= *RK++;
     X[0] ^= *RK++;
     X[1] ^= *RK++;
-
+/*
     MBEDTLS_PUT_UINT32_BE(X[2], output,  0);
     MBEDTLS_PUT_UINT32_BE(X[3], output,  4);
     MBEDTLS_PUT_UINT32_BE(X[0], output,  8);
     MBEDTLS_PUT_UINT32_BE(X[1], output, 12);
+*/
 
+    MBEDTLS_PUT_UINT32_BE(X[0], output,  0);
+    MBEDTLS_PUT_UINT32_BE(X[1], output,  4);
+    MBEDTLS_PUT_UINT32_BE(X[2], output,  8);
+    MBEDTLS_PUT_UINT32_BE(X[3], output, 12);
+	
     return 0;
 }
 
