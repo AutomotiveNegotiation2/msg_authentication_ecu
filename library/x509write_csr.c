@@ -203,9 +203,9 @@ int mbedtls_x509write_csr_set_key_usage(mbedtls_x509write_csr *ctx, unsigned cha
                                               0, c, (size_t) ret);
     if (ret != 0) {
         return ret;
+    } else {
+        return 10;
     }
-
-    return 10;
 }
 
 int mbedtls_x509write_csr_set_ns_cert_type(mbedtls_x509write_csr *ctx,
