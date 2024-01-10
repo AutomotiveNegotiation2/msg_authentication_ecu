@@ -557,6 +557,7 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
 void mbedtls_x509_csr_init(mbedtls_x509_csr *csr)
 {
     memset(csr, 0, sizeof(mbedtls_x509_csr));
+    return ;
 }
 
 /*
@@ -567,6 +568,7 @@ void mbedtls_x509_csr_free(mbedtls_x509_csr *csr)
     if (csr == NULL) {
         return;
     }
+    else return;
 
     mbedtls_pk_free(&csr->pk);
 
