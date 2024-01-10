@@ -488,6 +488,7 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
 
     while (NR) {
         --NR;
+		/*
         camellia_feistel(X, RK, X + 2);
         RK += 2;
         camellia_feistel(X + 2, RK, X);
@@ -500,6 +501,20 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
         RK += 2;
         camellia_feistel(X + 2, RK, X);
         RK += 2;
+		*/
+		
+        camellia_feistel(X, RK, X + 1);
+        RK++;
+        camellia_feistel(X + 1, RK, X);
+        RK++;
+        camellia_feistel(X, RK, X + 1);
+        RK++;
+        camellia_feistel(X + 1, RK, X);
+        RK++;
+        camellia_feistel(X, RK, X + 1);
+        RK++;
+        camellia_feistel(X + 1, RK, X);
+        RK++;
 
         if (NR) {
             FL(X[0], X[1], RK[0], RK[1]);
