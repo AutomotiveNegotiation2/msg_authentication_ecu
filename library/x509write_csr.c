@@ -228,8 +228,9 @@ int mbedtls_x509write_csr_set_ns_cert_type(mbedtls_x509write_csr *ctx,
     if (ret != 0) {
         return ret;
     }
-
-    return 0;
+    else {
+        return 0;
+    }
 }
 
 static int x509write_csr_der_internal(mbedtls_x509write_csr *ctx,
