@@ -250,10 +250,10 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
  *
  * Note: initial state is wrong for server, but is not used anyway.
  */
-#define MBEDTLS_SSL_RETRANS_PREPARING       0
-#define MBEDTLS_SSL_RETRANS_SENDING         1
-#define MBEDTLS_SSL_RETRANS_WAITING         2
-#define MBEDTLS_SSL_RETRANS_FINISHED        3
+#define MBEDTLS_SSL_RETRANS_PREPARING       0U
+#define MBEDTLS_SSL_RETRANS_SENDING         1U
+#define MBEDTLS_SSL_RETRANS_WAITING         2U
+#define MBEDTLS_SSL_RETRANS_FINISHED        3U
 
 /*
  * Allow extra bytes for record, authentication and encryption overhead:
