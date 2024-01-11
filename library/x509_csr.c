@@ -54,7 +54,7 @@
 static int x509_csr_set_version(unsigned char **p,
                                 const unsigned char *end,
                                 int *ver);
-                                
+
 static int x509_csr_get_version(unsigned char **p,
                                 const unsigned char *end,
                                 int *ver)
@@ -92,12 +92,19 @@ static int x509_csr_parse_extensions(mbedtls_x509_csr *csr,
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
         }
 
+        else{
+            ;//do somthing
+        }
+
         end_ext_data = *p + len;
 
         /* Get extension ID */
         if ((ret = mbedtls_asn1_get_tag(p, end_ext_data, &extn_oid.len,
                                         MBEDTLS_ASN1_OID)) != 0) {
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
+        }
+        else {
+            ; //do somthing
         }
 
         extn_oid.tag = MBEDTLS_ASN1_OID;
