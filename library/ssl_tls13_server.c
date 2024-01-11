@@ -19,6 +19,44 @@
 
 #include "common.h"
 
+/**
+ * \def MBEDTLS_SSL_SRV_C
+ *
+ * Enable the SSL/TLS server code.
+ *
+ * Module:  library/ssl*_server.c
+ * Caller:
+ *
+ * Requires: MBEDTLS_SSL_TLS_C
+ *
+ * This module is required for SSL/TLS server support.
+ */
+#define MBEDTLS_SSL_SRV_C
+
+/**
+ * \def MBEDTLS_SSL_PROTO_TLS1_3
+ *
+ * Enable support for TLS 1.3.
+ *
+ * \note See docs/architecture/tls13-support.md for a description of the TLS
+ *       1.3 support that this option enables.
+ *
+ * Requires: MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ *
+ * \note TLS 1.3 uses PSA crypto for cryptographic operations that are
+ *       directly performed by TLS 1.3 code. As a consequence, you must
+ *       call psa_crypto_init() before the first TLS 1.3 handshake.
+ *
+ * \note Cryptographic operations performed indirectly via another module
+ *       (X.509, PK) or by code shared with TLS 1.2 (record protection,
+ *       running handshake hash) only use PSA crypto if
+ *       #MBEDTLS_USE_PSA_CRYPTO is enabled.
+ *
+ * Uncomment this macro to enable the support for TLS 1.3.
+ */
+#define MBEDTLS_SSL_PROTO_TLS1_3
+
 #if defined(MBEDTLS_SSL_SRV_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include "mbedtls/debug.h"
