@@ -229,7 +229,7 @@ int mbedtls_x509write_csr_set_ns_cert_type(mbedtls_x509write_csr *ctx,
         return ret;
     }
     else {
-        return 0;
+        return 10;
     }
 }
 
