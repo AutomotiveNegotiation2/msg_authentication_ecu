@@ -51,6 +51,10 @@
 /*
  *  Version  ::=  INTEGER  {  v1(0)  }
  */
+static int x509_csr_set_version(unsigned char **p,
+                                const unsigned char *end,
+                                int *ver);
+                                
 static int x509_csr_get_version(unsigned char **p,
                                 const unsigned char *end,
                                 int *ver)
