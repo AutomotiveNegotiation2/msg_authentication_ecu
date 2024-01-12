@@ -77,37 +77,37 @@
 /*
  * Internal identity of handshake extensions
  */
-#define MBEDTLS_SSL_EXT_ID_UNRECOGNIZED                0
-#define MBEDTLS_SSL_EXT_ID_SERVERNAME                  1
-#define MBEDTLS_SSL_EXT_ID_SERVERNAME_HOSTNAME         1
-#define MBEDTLS_SSL_EXT_ID_MAX_FRAGMENT_LENGTH         2
-#define MBEDTLS_SSL_EXT_ID_STATUS_REQUEST              3
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_GROUPS            4
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_ELLIPTIC_CURVES   4
-#define MBEDTLS_SSL_EXT_ID_SIG_ALG                     5
-#define MBEDTLS_SSL_EXT_ID_USE_SRTP                    6
-#define MBEDTLS_SSL_EXT_ID_HEARTBEAT                   7
-#define MBEDTLS_SSL_EXT_ID_ALPN                        8
-#define MBEDTLS_SSL_EXT_ID_SCT                         9
-#define MBEDTLS_SSL_EXT_ID_CLI_CERT_TYPE              10
-#define MBEDTLS_SSL_EXT_ID_SERV_CERT_TYPE             11
-#define MBEDTLS_SSL_EXT_ID_PADDING                    12
-#define MBEDTLS_SSL_EXT_ID_PRE_SHARED_KEY             13
-#define MBEDTLS_SSL_EXT_ID_EARLY_DATA                 14
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_VERSIONS         15
-#define MBEDTLS_SSL_EXT_ID_COOKIE                     16
-#define MBEDTLS_SSL_EXT_ID_PSK_KEY_EXCHANGE_MODES     17
-#define MBEDTLS_SSL_EXT_ID_CERT_AUTH                  18
-#define MBEDTLS_SSL_EXT_ID_OID_FILTERS                19
-#define MBEDTLS_SSL_EXT_ID_POST_HANDSHAKE_AUTH        20
-#define MBEDTLS_SSL_EXT_ID_SIG_ALG_CERT               21
-#define MBEDTLS_SSL_EXT_ID_KEY_SHARE                  22
-#define MBEDTLS_SSL_EXT_ID_TRUNCATED_HMAC             23
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_POINT_FORMATS    24
-#define MBEDTLS_SSL_EXT_ID_ENCRYPT_THEN_MAC           25
-#define MBEDTLS_SSL_EXT_ID_EXTENDED_MASTER_SECRET     26
-#define MBEDTLS_SSL_EXT_ID_SESSION_TICKET             27
-#define MBEDTLS_SSL_EXT_ID_RECORD_SIZE_LIMIT          28
+#define MBEDTLS_SSL_EXT_ID_UNRECOGNIZED                0U
+#define MBEDTLS_SSL_EXT_ID_SERVERNAME                  1U
+#define MBEDTLS_SSL_EXT_ID_SERVERNAME_HOSTNAME         1U
+#define MBEDTLS_SSL_EXT_ID_MAX_FRAGMENT_LENGTH         2U
+#define MBEDTLS_SSL_EXT_ID_STATUS_REQUEST              3U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_GROUPS            4U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_ELLIPTIC_CURVES   4U
+#define MBEDTLS_SSL_EXT_ID_SIG_ALG                     5U
+#define MBEDTLS_SSL_EXT_ID_USE_SRTP                    6U
+#define MBEDTLS_SSL_EXT_ID_HEARTBEAT                   7U
+#define MBEDTLS_SSL_EXT_ID_ALPN                        8U
+#define MBEDTLS_SSL_EXT_ID_SCT                         9U
+#define MBEDTLS_SSL_EXT_ID_CLI_CERT_TYPE              10U
+#define MBEDTLS_SSL_EXT_ID_SERV_CERT_TYPE             11U
+#define MBEDTLS_SSL_EXT_ID_PADDING                    12U
+#define MBEDTLS_SSL_EXT_ID_PRE_SHARED_KEY             13U
+#define MBEDTLS_SSL_EXT_ID_EARLY_DATA                 14U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_VERSIONS         15U
+#define MBEDTLS_SSL_EXT_ID_COOKIE                     16U
+#define MBEDTLS_SSL_EXT_ID_PSK_KEY_EXCHANGE_MODES     17U
+#define MBEDTLS_SSL_EXT_ID_CERT_AUTH                  18U
+#define MBEDTLS_SSL_EXT_ID_OID_FILTERS                19U
+#define MBEDTLS_SSL_EXT_ID_POST_HANDSHAKE_AUTH        20U
+#define MBEDTLS_SSL_EXT_ID_SIG_ALG_CERT               21U
+#define MBEDTLS_SSL_EXT_ID_KEY_SHARE                  22U
+#define MBEDTLS_SSL_EXT_ID_TRUNCATED_HMAC             23U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_POINT_FORMATS    24U
+#define MBEDTLS_SSL_EXT_ID_ENCRYPT_THEN_MAC           25U
+#define MBEDTLS_SSL_EXT_ID_EXTENDED_MASTER_SECRET     26U
+#define MBEDTLS_SSL_EXT_ID_SESSION_TICKET             27U
+#define MBEDTLS_SSL_EXT_ID_RECORD_SIZE_LIMIT          28U
 
 /* Utility for translating IANA extension type. */
 uint32_t mbedtls_ssl_get_extension_id(unsigned int extension_type);
