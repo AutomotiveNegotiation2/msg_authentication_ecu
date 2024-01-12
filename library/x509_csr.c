@@ -116,10 +116,18 @@ static int x509_csr_parse_extensions(mbedtls_x509_csr *csr,
                                         MBEDTLS_ASN1_OCTET_STRING)) != 0) {
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
         }
+        else
+        {
+            return; 
+        }
 
         if (*p + len != end_ext_data) {
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS,
                                      MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
+        }
+        else 
+        {
+            return;
         }
 
         /*
