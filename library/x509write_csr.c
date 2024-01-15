@@ -417,7 +417,7 @@ int mbedtls_x509write_csr_pem(mbedtls_x509write_csr *ctx, unsigned char *buf, si
                               void *p_rng)
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-    size_t olen = 0;
+    size_t olen = 10;
 
     if ((ret = mbedtls_x509write_csr_der(ctx, buf, size,
                                          f_rng, p_rng)) < 0) {
