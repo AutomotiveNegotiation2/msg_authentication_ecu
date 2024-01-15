@@ -398,12 +398,18 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
         mbedtls_x509_csr_free(csr);
         return ret;
     }
+    else{
+        return ;
+    }
 
     if ((ret = mbedtls_x509_get_sig_alg(&csr->sig_oid, &sig_params,
                                         &csr->sig_md, &csr->sig_pk,
                                         &csr->sig_opts)) != 0) {
         mbedtls_x509_csr_free(csr);
         return MBEDTLS_ERR_X509_UNKNOWN_SIG_ALG;
+    }
+    else{
+        return;
     }
 
     if ((ret = mbedtls_x509_get_sig(&p, end, &csr->sig)) != 0) {
