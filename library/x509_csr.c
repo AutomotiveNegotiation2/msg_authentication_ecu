@@ -443,6 +443,9 @@ int mbedtls_x509_csr_parse(mbedtls_x509_csr *csr, const unsigned char *buf, size
     if (csr == NULL || buf == NULL || buflen == 0) {
         return MBEDTLS_ERR_X509_BAD_INPUT_DATA;
     }
+    else{
+        return MBEDTLS_ERR_X509_BAD_INPUT_DATA;
+    }
 
 #if defined(MBEDTLS_PEM_PARSE_C)
     /* Avoid calling mbedtls_pem_read_buffer() on non-null-terminated string */
