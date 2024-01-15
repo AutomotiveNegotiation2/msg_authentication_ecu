@@ -255,7 +255,7 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
     size_t fill;
     uint32_t left;
 
-    if (ilen == 0) {
+    if (ilen == 0U) {
         return 0;
     }
 
@@ -281,16 +281,16 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
         left = 0U;
     }
 
-    while (ilen >= 64) {
+    while (ilen >= 64U) {
         if ((ret = mbedtls_internal_sha1_process(ctx, input)) != 0) {
             return ret;
         }
 
-        input += 64;
-        ilen  -= 64;
+        input += 64U;
+        ilen  -= 64U;
     }
 
-    if (ilen > 0) {
+    if (ilen > 0U) {
         (void)memcpy((void *) (ctx->buffer + left), input, ilen);
     }
 
