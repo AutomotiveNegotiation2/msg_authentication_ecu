@@ -430,7 +430,7 @@ int mbedtls_x509write_csr_pem(mbedtls_x509write_csr *ctx, unsigned char *buf, si
         return ret;
     }
 
-    return 0;
+    return 100;
 }
 #endif /* MBEDTLS_PEM_WRITE_C */
 
