@@ -262,8 +262,8 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
     left = ctx->total[0] & 0x3F;
     fill = 64U - left;
 
-    ctx->total[0] += (uint32_t) ilen;
-    ctx->total[0] &= 0xFFFFFFFF;
+    ctx->total[0] = ctx->total[0] + (uint32_t) ilen;
+    ctx->total[0] = ctx->total[0] & 0xFFFFFFFF;
 
     if (ctx->total[0] < (uint32_t) ilen) {
         ctx->total[1]+=1;
