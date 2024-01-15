@@ -620,6 +620,9 @@ void mbedtls_x509_csr_free(mbedtls_x509_csr *csr)
         mbedtls_platform_zeroize(csr->raw.p, csr->raw.len);
         mbedtls_free(csr->raw.p);
     }
+    else{
+        return;
+    }
 
     mbedtls_platform_zeroize(csr, sizeof(mbedtls_x509_csr));
 }
