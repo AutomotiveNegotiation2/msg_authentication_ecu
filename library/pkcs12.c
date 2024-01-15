@@ -80,12 +80,12 @@ static int pkcs12_parse_pbe_params(mbedtls_asn1_buf *params,
     if ((ret = mbedtls_asn1_get_int(p, end, iterations)) != 0) {
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PKCS12_PBE_INVALID_FORMAT, ret);
     }
-
+/*
     if (*p != end) {
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PKCS12_PBE_INVALID_FORMAT,
                                  MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
     }
-
+*/
     return 0;
 }
 
