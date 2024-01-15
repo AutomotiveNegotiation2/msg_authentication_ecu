@@ -352,6 +352,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 
 /* Minimum size in bytes of list in signature algorithms ext., RFC 5246/8446 */
 #define MBEDTLS_SSL_MIN_SIG_ALG_LIST_LEN       2
+#define MBEDTLS_SSL_MAX_SIG_ALG_LIST_LEN       32
 
 /* Maximum size in bytes of list in supported elliptic curve ext., RFC 4492 */
 #define MBEDTLS_SSL_MAX_CURVE_LIST_LEN         65535
