@@ -142,6 +142,47 @@ static void ssl_tls13_hkdf_encode_label(
     *dst_len = total_hkdf_lbl_len;
 }
 
+static void ssl_tls13_hkdf_encode_label_test(
+    size_t desired_length,
+    const unsigned char *label, size_t label_len,
+    const unsigned char *ctx, size_t ctx_len,
+    unsigned char *dst, size_t *dst_len)
+{
+    size_t total_label_len =
+        sizeof(tls13_label_prefix) + label_len;
+    size_t total_hkdf_lbl_len =
+        SSL_TLS1_3_KEY_SCHEDULE_HKDF_LABEL_LEN(total_label_len, ctx_len);
+
+    unsigned char *p = dst;
+
+    /* Add the size of the expanded key material.
+     * We're hardcoding the high byte to 0 here assuming that we never use
+     * TLS 1.3 HKDF key expansion to more than 255 Bytes. */
+#if MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN > 255
+#error "The implementation of ssl_tls13_hkdf_encode_label() is not fit for the \
+    value of MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN"
+#endif
+
+    *p++ = 0;
+    *p++ = MBEDTLS_BYTE_0(desired_length);
+
+    /* Add label incl. prefix */
+    *p++ = MBEDTLS_BYTE_0(total_label_len);
+    memcpy(p, tls13_label_prefix, sizeof(tls13_label_prefix));
+    p += sizeof(tls13_label_prefix);
+    memcpy(p, label, label_len);
+    p += label_len;
+
+    /* Add context value */
+    *p++ = MBEDTLS_BYTE_0(ctx_len);
+    if (ctx_len != 0) {
+        memcpy(p, ctx, ctx_len);
+    }
+
+    /* Return total length to the caller.  */
+    *dst_len = total_hkdf_lbl_len;
+}
+
 int mbedtls_ssl_tls13_hkdf_expand_label(
     psa_algorithm_t hash_alg,
     const unsigned char *secret, size_t secret_len,
