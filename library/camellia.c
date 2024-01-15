@@ -430,10 +430,14 @@ int mbedtls_camellia_setkey_dec(mbedtls_camellia_context *ctx,
 
     ctx->nr = cty.nr;
     idx = (ctx->nr == 4);
-
+/*
     RK = ctx->rk;
     SK = cty.rk + 24 * 2 + 8 * idx * 2;
+*/
 
+    RK = ctx->rk;
+    SK = cty.rk;
+	
     *RK++ = *SK++;
     *RK++ = *SK++;
     *RK++ = *SK++;
