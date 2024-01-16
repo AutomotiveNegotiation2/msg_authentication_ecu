@@ -585,6 +585,9 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
         ret = mbedtls_snprintf(p, n, "\n");
         MBEDTLS_X509_SAFE_SNPRINTF;
     }
+    else{
+        return;
+    }
 
     return (int) (size - n);
 }
