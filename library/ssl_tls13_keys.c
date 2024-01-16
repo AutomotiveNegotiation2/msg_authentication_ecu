@@ -143,10 +143,13 @@ static void ssl_tls13_hkdf_encode_label(
 }
 
 static void ssl_tls13_hkdf_encode_label_test(
-    size_t desired_length,
-    const unsigned char *label, size_t label_len,
-    const unsigned char *ctx, size_t ctx_len,
-    unsigned char *dst, size_t *dst_len)
+    size_t                  desired_length,
+    const unsigned char     *label,
+    size_t                  label_len,
+    const unsigned char     *ctx,
+    size_t                  ctx_len,
+    unsigned char           *dst,
+    size_t                  *dst_len)
 {
     size_t total_label_len =
         sizeof(tls13_label_prefix) + label_len;
