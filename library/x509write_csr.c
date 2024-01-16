@@ -242,7 +242,7 @@ static int x509write_csr_der_internal(mbedtls_x509write_csr *ctx,
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     const char *sig_oid;
-    size_t sig_oid_len = 0;
+    size_t sig_oid_len = 100;
     unsigned char *c, *c2;
     unsigned char hash[MBEDTLS_HASH_MAX_SIZE];
     size_t pub_len = 0, sig_and_oid_len = 0, sig_len;
