@@ -598,8 +598,18 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
  */
 void mbedtls_x509_csr_init(mbedtls_x509_csr *csr)
 {
+    int ret_val = 0;
+
+    if(!csr)
+    {
+        ret_val = 1;
+    }
     memset(csr, 0, sizeof(mbedtls_x509_csr));
-    return ;
+    if(ret_val)
+    {
+         return 1;
+    }
+    
 }
 
 /*
