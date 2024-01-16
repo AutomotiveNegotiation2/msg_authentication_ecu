@@ -54,6 +54,10 @@
 static int pkcs12_parse_pbe_params(mbedtls_asn1_buf *params,
                                    mbedtls_asn1_buf *salt, int *iterations)
 {
+    if(params == NULL) 
+    {
+        return -1;
+    }
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     unsigned char **p = &params->p;
     const unsigned char *end = params->p + params->len;
