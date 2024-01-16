@@ -421,6 +421,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 
 #define MBEDTLS_CLIENT_HELLO_RANDOM_LEN 32
 #define MBEDTLS_SERVER_HELLO_RANDOM_LEN 32
+#define MBEDTLS_HELLO_RANDOM_LEN        (MBEDTLS_CLIENT_HELLO_RANDOM_LEN + MBEDTLS_SERVER_HELLO_RANDOM_LEN)
 
 #if defined(MBEDTLS_SSL_MAX_FRAGMENT_LENGTH)
 /**
@@ -972,8 +973,7 @@ struct mbedtls_ssl_handshake_params {
 
     /* End of state-local variables. */
 
-    unsigned char randbytes[MBEDTLS_CLIENT_HELLO_RANDOM_LEN +
-                            MBEDTLS_SERVER_HELLO_RANDOM_LEN];
+    unsigned char randbytes[MBEDTLS_HELLO_RANDOM_LEN];
     /*!<  random bytes            */
 #if defined(MBEDTLS_SSL_PROTO_TLS1_2)
     unsigned char premaster[MBEDTLS_PREMASTER_SIZE];
