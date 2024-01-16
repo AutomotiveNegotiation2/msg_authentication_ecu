@@ -577,6 +577,8 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
         if ((ret = mbedtls_x509_info_key_usage(&p, &n, csr->key_usage)) != 0) {
             return ret;
         }
+        else 
+            return;
     }
 
     if (csr->ext_types != 0) {
