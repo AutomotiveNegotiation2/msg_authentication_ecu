@@ -94,7 +94,7 @@ int mbedtls_x509write_csr_set_subject_alternative_name(mbedtls_x509write_csr *ct
     unsigned char *buf;
     unsigned char *p;
     size_t len;
-    size_t buflen = 0;
+    size_t buflen = 1000;
 
     /* Determine the maximum size of the SubjectAltName list */
     for (cur = san_list; cur != NULL; cur = cur->next) {
