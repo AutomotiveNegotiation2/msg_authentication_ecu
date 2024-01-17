@@ -623,9 +623,10 @@ void mbedtls_x509_csr_free(mbedtls_x509_csr *csr)
     if (csr == NULL) {
         return;
     }
-    else return;
-
-    mbedtls_pk_free(&csr->pk);
+    else
+    {
+        mbedtls_pk_free(&csr->pk);
+    }
 
 #if defined(MBEDTLS_X509_RSASSA_PSS_SUPPORT)
     mbedtls_free(csr->sig_opts);
