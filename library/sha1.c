@@ -38,7 +38,7 @@
 
 void mbedtls_sha1_init(mbedtls_sha1_context *ctx)
 {
-    memset(ctx, 0, sizeof(mbedtls_sha1_context));
+    (void)memset(ctx, 0, sizeof(mbedtls_sha1_context));
 }
 
 void mbedtls_sha1_free(mbedtls_sha1_context *ctx)
@@ -81,16 +81,16 @@ int mbedtls_internal_sha1_process(mbedtls_sha1_context *ctx,
         uint32_t temp, W[16], A, B, C, D, E;
     } local;
 
-    local.W[0] = MBEDTLS_GET_UINT32_BE(data,  0);
-    local.W[1] = MBEDTLS_GET_UINT32_BE(data,  4);
-    local.W[2] = MBEDTLS_GET_UINT32_BE(data,  8);
-    local.W[3] = MBEDTLS_GET_UINT32_BE(data, 12);
-    local.W[4] = MBEDTLS_GET_UINT32_BE(data, 16);
-    local.W[5] = MBEDTLS_GET_UINT32_BE(data, 20);
-    local.W[6] = MBEDTLS_GET_UINT32_BE(data, 24);
-    local.W[7] = MBEDTLS_GET_UINT32_BE(data, 28);
-    local.W[8] = MBEDTLS_GET_UINT32_BE(data, 32);
-    local.W[9] = MBEDTLS_GET_UINT32_BE(data, 36);
+    local.W[0]  = MBEDTLS_GET_UINT32_BE(data,  0);
+    local.W[1]  = MBEDTLS_GET_UINT32_BE(data,  4);
+    local.W[2]  = MBEDTLS_GET_UINT32_BE(data,  8);
+    local.W[3]  = MBEDTLS_GET_UINT32_BE(data, 12);
+    local.W[4]  = MBEDTLS_GET_UINT32_BE(data, 16);
+    local.W[5]  = MBEDTLS_GET_UINT32_BE(data, 20);
+    local.W[6]  = MBEDTLS_GET_UINT32_BE(data, 24);
+    local.W[7]  = MBEDTLS_GET_UINT32_BE(data, 28);
+    local.W[8]  = MBEDTLS_GET_UINT32_BE(data, 32);
+    local.W[9]  = MBEDTLS_GET_UINT32_BE(data, 36);
     local.W[10] = MBEDTLS_GET_UINT32_BE(data, 40);
     local.W[11] = MBEDTLS_GET_UINT32_BE(data, 44);
     local.W[12] = MBEDTLS_GET_UINT32_BE(data, 48);
@@ -100,20 +100,20 @@ int mbedtls_internal_sha1_process(mbedtls_sha1_context *ctx,
 
 #define S(x, n) (((x) << (n)) | (((x) & 0xFFFFFFFF) >> (32 - (n))))
 
-#define R(t)                                                    \
-    (                                                           \
-        local.temp = local.W[((t) -  3) & 0x0F] ^             \
-                     local.W[((t) -  8) & 0x0F] ^             \
-                     local.W[((t) - 14) & 0x0F] ^             \
-                     local.W[(t)        & 0x0F],              \
-        (local.W[(t) & 0x0F] = S(local.temp, 1))               \
+#define R(t)                                            \
+    (                                                   \
+        local.temp = local.W[((t) -  3) & 0x0fU] ^      \
+                     local.W[((t) -  8) & 0x0fU] ^      \
+                     local.W[((t) - 14) & 0x0fU] ^      \
+                     local.W[(t)        & 0x0fU],       \
+        (local.W[(t) & 0x0fU] = S(local.temp, 1))        \
     )
 
-#define P(a, b, c, d, e, x)                                          \
-    do                                                          \
-    {                                                           \
-        (e) += S((a), 5) + F((b), (c), (d)) + K + (x);             \
-        (b) = S((b), 30);                                        \
+#define P(a, b, c, d, e, x)                             \
+    do                                                  \
+    {                                                   \
+        (e) += S((a), 5) + F((b), (c), (d)) + K + (x);  \
+        (b) = S((b), 30);                               \
     } while (0)
 
     local.A = ctx->state[0];
@@ -230,11 +230,11 @@ int mbedtls_internal_sha1_process(mbedtls_sha1_context *ctx,
 #undef K
 #undef F
 
-    ctx->state[0] += local.A;
-    ctx->state[1] += local.B;
-    ctx->state[2] += local.C;
-    ctx->state[3] += local.D;
-    ctx->state[4] += local.E;
+    ctx->state[0] = ctx->state[0] + local.A;
+    ctx->state[1] = ctx->state[1] + local.B;
+    ctx->state[2] = ctx->state[2] + local.C;
+    ctx->state[3] = ctx->state[3] + local.D;
+    ctx->state[4] = ctx->state[4] + local.E;
 
     /* Zeroise buffers and variables to clear sensitive data from memory. */
     mbedtls_platform_zeroize(&local, sizeof(local));
@@ -255,22 +255,22 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
     size_t fill;
     uint32_t left;
 
-    if (ilen == 0) {
+    if (ilen == 0U) {
         return 0;
     }
 
     left = ctx->total[0] & 0x3F;
-    fill = 64 - left;
+    fill = 64U - left;
 
-    ctx->total[0] += (uint32_t) ilen;
-    ctx->total[0] &= 0xFFFFFFFF;
+    ctx->total[0] = ctx->total[0] + (uint32_t) ilen;
+    ctx->total[0] = ctx->total[0] & 0xFFFFFFFF;
 
     if (ctx->total[0] < (uint32_t) ilen) {
-        ctx->total[1]++;
+        ctx->total[1]+=1;
     }
 
     if (left && ilen >= fill) {
-        memcpy((void *) (ctx->buffer + left), input, fill);
+        (void)memcpy((void *) (ctx->buffer + left), input, fill);
 
         if ((ret = mbedtls_internal_sha1_process(ctx, ctx->buffer)) != 0) {
             return ret;
@@ -278,20 +278,20 @@ int mbedtls_sha1_update(mbedtls_sha1_context *ctx,
 
         input += fill;
         ilen  -= fill;
-        left = 0;
+        left = 0U;
     }
 
-    while (ilen >= 64) {
+    while (ilen >= 64U) {
         if ((ret = mbedtls_internal_sha1_process(ctx, input)) != 0) {
             return ret;
         }
 
-        input += 64;
-        ilen  -= 64;
+        input += 64U;
+        ilen  -= 64U;
     }
 
-    if (ilen > 0) {
-        memcpy((void *) (ctx->buffer + left), input, ilen);
+    if (ilen > 0U) {
+        (void)memcpy((void *) (ctx->buffer + left), input, ilen);
     }
 
     return 0;
@@ -314,18 +314,19 @@ int mbedtls_sha1_finish(mbedtls_sha1_context *ctx,
 
     ctx->buffer[used++] = 0x80;
 
-    if (used <= 56) {
+    if (used < 57U) {
         /* Enough room for padding + length in current block */
-        memset(ctx->buffer + used, 0, 56 - used);
+        (void)memset(ctx->buffer + used, 0, 56 - used);
     } else {
         /* We'll need an extra block */
-        memset(ctx->buffer + used, 0, 64 - used);
+        (void)memset(ctx->buffer + used, 0, 64 - used);
 
-        if ((ret = mbedtls_internal_sha1_process(ctx, ctx->buffer)) != 0) {
+        ret = mbedtls_internal_sha1_process(ctx, ctx->buffer);
+        if (ret  != 0) {
             return ret;
         }
 
-        memset(ctx->buffer, 0, 56);
+        (void)memset(ctx->buffer, 0, 56);
     }
 
     /*
@@ -369,18 +370,17 @@ int mbedtls_sha1(const unsigned char *input,
     mbedtls_sha1_init(&ctx);
 
     if ((ret = mbedtls_sha1_starts(&ctx)) != 0) {
-        goto exit;
+        break;
     }
 
     if ((ret = mbedtls_sha1_update(&ctx, input, ilen)) != 0) {
-        goto exit;
+        break;
     }
 
     if ((ret = mbedtls_sha1_finish(&ctx, output)) != 0) {
-        goto exit;
+        break;
     }
 
-exit:
     mbedtls_sha1_free(&ctx);
 
     return ret;
@@ -437,7 +437,7 @@ int mbedtls_sha1_self_test(int verbose)
         }
 
         if (i == 2) {
-            memset(buf, 'a', buflen = 1000);
+            (void)memset(buf, 'a', buflen = 1000);
 
             for (j = 0; j < 1000; j++) {
                 ret = mbedtls_sha1_update(&ctx, buf, buflen);
