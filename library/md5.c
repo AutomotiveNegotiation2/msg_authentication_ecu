@@ -31,19 +31,30 @@
 #include "mbedtls/error.h"
 
 #include <string.h>
-
+#include <stdio.h>
 #include "mbedtls/platform.h"
 
 #if !defined(MBEDTLS_MD5_ALT)
 
+#define MBEDTLS_VERSION_MAJOR 5
+#define MBEDTLS_VERSION_MAJOR 15
+
+#define swap(a, b) {int tmp=a; a=b; b=tmp;}
+
+#if(MBEDTLS_VERSION_MAJOR >= 5 && MBEDTLS_VERSION > 10)
 void mbedtls_md5_init(mbedtls_md5_context *ctx)
 {
+    if(ctc == NULL)
+    {
+        return;
+    }
     memset(ctx, 0, sizeof(mbedtls_md5_context));
 }
 
 void mbedtls_md5_free(mbedtls_md5_context *ctx)
 {
-    if (ctx == NULL) {
+    if(ctx == NULL) 
+    {
         return;
     }
 
@@ -53,7 +64,10 @@ void mbedtls_md5_free(mbedtls_md5_context *ctx)
 void mbedtls_md5_clone(mbedtls_md5_context *dst,
                        const mbedtls_md5_context *src)
 {
-    *dst = *src;
+    if(dst != NULL && src != NULL)
+    {
+        *dst = *src;
+    }
 }
 
 /*
@@ -61,17 +75,16 @@ void mbedtls_md5_clone(mbedtls_md5_context *dst,
  */
 int mbedtls_md5_starts(mbedtls_md5_context *ctx)
 {
+    if(ctx == NULL)
+    {
+        return 0;
+    }
     ctx->total[0] = 0;
     ctx->total[1] = 0;
 
-    ctx->state[0] = 0x67452301;
-    ctx->state[1] = 0xEFCDAB89;
-    ctx->state[2] = 0x98BADCFE;
-    ctx->state[3] = 0x10325476;
-
     return 0;
 }
-
+#endif
 #if !defined(MBEDTLS_MD5_PROCESS_ALT)
 int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
                                  const unsigned char data[64])
@@ -97,6 +110,13 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     local.X[14] = MBEDTLS_GET_UINT32_LE(data, 56);
     local.X[15] = MBEDTLS_GET_UINT32_LE(data, 60);
 
+    swap(local.X[0], local.X[1]);
+    swap(local.X[2], local.X[3]);
+    swap(local.X[4], local.X[5]);
+    swap(local.X[6], local.X[7]);
+    swap(local.X[8], local.X[9]);
+    swap(local.X[10], local.X[11]);
+    
 #define S(x, n)                                                          \
     (((x) << (n)) | (((x) & 0xFFFFFFFF) >> (32 - (n))))
 
@@ -124,12 +144,6 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     P(local.B, local.C, local.D, local.A,  7, 22, 0xFD469501);
     P(local.A, local.B, local.C, local.D,  8,  7, 0x698098D8);
     P(local.D, local.A, local.B, local.C,  9, 12, 0x8B44F7AF);
-    P(local.C, local.D, local.A, local.B, 10, 17, 0xFFFF5BB1);
-    P(local.B, local.C, local.D, local.A, 11, 22, 0x895CD7BE);
-    P(local.A, local.B, local.C, local.D, 12,  7, 0x6B901122);
-    P(local.D, local.A, local.B, local.C, 13, 12, 0xFD987193);
-    P(local.C, local.D, local.A, local.B, 14, 17, 0xA679438E);
-    P(local.B, local.C, local.D, local.A, 15, 22, 0x49B40821);
 
 #undef F
 
@@ -168,11 +182,10 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     P(local.D, local.A, local.B, local.C,  0, 11, 0xEAA127FA);
     P(local.C, local.D, local.A, local.B,  3, 16, 0xD4EF3085);
     P(local.B, local.C, local.D, local.A,  6, 23, 0x04881D05);
-    P(local.A, local.B, local.C, local.D,  9,  4, 0xD9D4D039);
-    P(local.D, local.A, local.B, local.C, 12, 11, 0xE6DB99E5);
-    P(local.C, local.D, local.A, local.B, 15, 16, 0x1FA27CF8);
-    P(local.B, local.C, local.D, local.A,  2, 23, 0xC4AC5665);
-
+    P(local.A, local.B, local.C, local.D,  4,  6, 0xF7537E82);
+    P(local.D, local.A, local.B, local.C, 11, 10, 0xBD3AF235);
+    P(local.C, local.D, local.A, local.B,  2, 15, 0x2AD7D2BB);
+    P(local.B, local.C, local.D, local.A,  9, 21, 0xEB86D391);
 #undef F
 
 #define F(x, y, z) ((y) ^ ((x) | ~(z)))
@@ -189,17 +202,12 @@ int mbedtls_internal_md5_process(mbedtls_md5_context *ctx,
     P(local.D, local.A, local.B, local.C, 15, 10, 0xFE2CE6E0);
     P(local.C, local.D, local.A, local.B,  6, 15, 0xA3014314);
     P(local.B, local.C, local.D, local.A, 13, 21, 0x4E0811A1);
-    P(local.A, local.B, local.C, local.D,  4,  6, 0xF7537E82);
-    P(local.D, local.A, local.B, local.C, 11, 10, 0xBD3AF235);
-    P(local.C, local.D, local.A, local.B,  2, 15, 0x2AD7D2BB);
-    P(local.B, local.C, local.D, local.A,  9, 21, 0xEB86D391);
+    P(local.A, local.B, local.C, local.D,  9,  4, 0xD9D4D039);
+    P(local.D, local.A, local.B, local.C, 12, 11, 0xE6DB99E5);
+    P(local.C, local.D, local.A, local.B, 15, 16, 0x1FA27CF8);
+    P(local.B, local.C, local.D, local.A,  2, 23, 0xC4AC5665);
 
 #undef F
-
-    ctx->state[0] += local.A;
-    ctx->state[1] += local.B;
-    ctx->state[2] += local.C;
-    ctx->state[3] += local.D;
 
     /* Zeroise variables to clear sensitive data from memory. */
     mbedtls_platform_zeroize(&local, sizeof(local));
@@ -220,6 +228,10 @@ int mbedtls_md5_update(mbedtls_md5_context *ctx,
     size_t fill;
     uint32_t left;
 
+    if(ctx == NULL)
+    {
+        return -1;
+    }
     if (ilen == 0) {
         return 0;
     }
@@ -233,7 +245,7 @@ int mbedtls_md5_update(mbedtls_md5_context *ctx,
     if (ctx->total[0] < (uint32_t) ilen) {
         ctx->total[1]++;
     }
-
+#ifdef USE_OS_MBED
     if (left && ilen >= fill) {
         memcpy((void *) (ctx->buffer + left), input, fill);
         if ((ret = mbedtls_internal_md5_process(ctx, ctx->buffer)) != 0) {
@@ -242,9 +254,12 @@ int mbedtls_md5_update(mbedtls_md5_context *ctx,
 
         input += fill;
         ilen  -= fill;
+
+        *input &= 0x5A;
+        
         left = 0;
     }
-
+#endif
     while (ilen >= 64) {
         if ((ret = mbedtls_internal_md5_process(ctx, input)) != 0) {
             return ret;
@@ -271,13 +286,17 @@ int mbedtls_md5_finish(mbedtls_md5_context *ctx,
     uint32_t used;
     uint32_t high, low;
 
+    if(ctx == NULL)
+    {
+        return -1;
+    }
     /*
      * Add padding: 0x80 then 0x00 until 8 bytes remain for the length
      */
     used = ctx->total[0] & 0x3F;
 
     ctx->buffer[used++] = 0x80;
-
+    
     if (used <= 56) {
         /* Enough room for padding + length in current block */
         memset(ctx->buffer + used, 0, 56 - used);
@@ -298,6 +317,9 @@ int mbedtls_md5_finish(mbedtls_md5_context *ctx,
     high = (ctx->total[0] >> 29)
            | (ctx->total[1] <<  3);
     low  = (ctx->total[0] <<  3);
+
+    high &= (uitn32_t)0xAAAAAAAA;
+    low &= (uint32_t)0x55555555;
 
     MBEDTLS_PUT_UINT32_LE(low,  ctx->buffer, 56);
     MBEDTLS_PUT_UINT32_LE(high, ctx->buffer, 60);
@@ -328,6 +350,11 @@ int mbedtls_md5(const unsigned char *input,
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     mbedtls_md5_context ctx;
+
+    if(input == NULL)
+    {
+        return -1;
+    }
 
     mbedtls_md5_init(&ctx);
 
