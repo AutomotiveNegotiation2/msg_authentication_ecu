@@ -21,6 +21,238 @@
 
 #include "common.h"
 
+/**
+ * \def MBEDTLS_SSL_CLI_C
+ *
+ * Enable the SSL/TLS client code.
+ *
+ * Module:  library/ssl*_client.c
+ * Caller:
+ *
+ * Requires: MBEDTLS_SSL_TLS_C
+ *
+ * This module is required for SSL/TLS client support.
+ */
+#define MBEDTLS_SSL_CLI_C
+
+/**
+ * \def MBEDTLS_SSL_PROTO_TLS1_3
+ *
+ * Enable support for TLS 1.3.
+ *
+ * \note The support for TLS 1.3 is not comprehensive yet, in particular
+ *       pre-shared keys are not supported.
+ *       See docs/architecture/tls13-support.md for a description of the TLS
+ *       1.3 support that this option enables.
+ *
+ * Requires: MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ *
+ * Note: even though TLS 1.3 depends on PSA Crypto, and uses it unconditionally
+ * for most operations, if you want it to only use PSA for all crypto
+ * operations, you need to also enable MBEDTLS_USE_PSA_CRYPTO; otherwise X.509
+ * operations, and functions that are common with TLS 1.2 (record protection,
+ * running handshake hash) will still use non-PSA crypto.
+ *
+ * Uncomment this macro to enable the support for TLS 1.3.
+ */
+#define MBEDTLS_SSL_PROTO_TLS1_3
+
+/**
+ * \def MBEDTLS_SSL_ALPN
+ *
+ * Enable support for RFC 7301 Application Layer Protocol Negotiation.
+ *
+ * Comment this macro to disable support for ALPN.
+ */
+#define MBEDTLS_SSL_ALPN
+
+/**
+ * \def MBEDTLS_ECDH_C
+ *
+ * Enable the elliptic curve Diffie-Hellman library.
+ *
+ * Module:  library/ecdh.c
+ * Caller:  library/psa_crypto.c
+ *          library/ssl_tls.c
+ *          library/ssl*_client.c
+ *          library/ssl*_server.c
+ *
+ * This module is used by the following key exchanges:
+ *      ECDHE-ECDSA, ECDHE-RSA, DHE-PSK
+ *
+ * Requires: MBEDTLS_ECP_C
+ */
+#define MBEDTLS_ECDH_C
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 ephemeral key exchange mode.
+ *
+ * Requires: MBEDTLS_ECDH_C, MBEDTLS_X509_CRT_PARSE_C, MBEDTLS_ECDSA_C or
+ *           MBEDTLS_PKCS1_V21
+ *
+ * Comment to disable support for the ephemeral key exchange mode in TLS 1.3.
+ * If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+
+#if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED) || \
+    defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED)
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_EPHEMERAL_ENABLED
+#endif
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
+ *
+ * Enable TLS 1.3 PSK key exchange mode.
+ *
+ * Comment to disable support for the PSK key exchange mode in TLS 1.3. If
+ * MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
+
+#if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED) || \
+    defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED)
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_PSK_ENABLED
+#endif
+
+/**
+ * \def MBEDTLS_SSL_SESSION_TICKETS
+ *
+ * Enable support for RFC 5077 session tickets in SSL.
+ * Client-side, provides full support for session tickets (maintenance of a
+ * session store remains the responsibility of the application, though).
+ * Server-side, you also need to provide callbacks for writing and parsing
+ * tickets, including authenticated encryption and key management. Example
+ * callbacks are provided by MBEDTLS_SSL_TICKET_C.
+ *
+ * Comment this macro to disable support for SSL session tickets
+ */
+#define MBEDTLS_SSL_SESSION_TICKETS
+
+/**
+ * \def MBEDTLS_SSL_EARLY_DATA
+ *
+ * Enable support for RFC 8446 TLS 1.3 early data.
+ *
+ * Requires: MBEDTLS_SSL_SESSION_TICKETS and either
+ *           MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED or
+ *           MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
+ *
+ * Comment this to disable support for early data. If MBEDTLS_SSL_PROTO_TLS1_3
+ * is not enabled, this option does not have any effect on the build.
+ *
+ * This feature is experimental, not completed and thus not ready for
+ * production.
+ *
+ */
+// #define MBEDTLS_SSL_EARLY_DATA
+
+/**
+ * \def MBEDTLS_HAVE_TIME
+ *
+ * System has time.h and time().
+ * The time does not need to be correct, only time differences are used,
+ * by contrast with MBEDTLS_HAVE_TIME_DATE
+ *
+ * Defining MBEDTLS_HAVE_TIME allows you to specify MBEDTLS_PLATFORM_TIME_ALT,
+ * MBEDTLS_PLATFORM_TIME_MACRO, MBEDTLS_PLATFORM_TIME_TYPE_MACRO and
+ * MBEDTLS_PLATFORM_STD_TIME.
+ *
+ * Comment if your system does not support time functions.
+ *
+ * \note If MBEDTLS_TIMING_C is set - to enable the semi-portable timing
+ *       interface - timing.c will include time.h on suitable platforms
+ *       regardless of the setting of MBEDTLS_HAVE_TIME, unless
+ *       MBEDTLS_TIMING_ALT is used. See timing.c for more information.
+ */
+#define MBEDTLS_HAVE_TIME
+
+#define MBEDTLS_SSL_EARLY_DATA_STATUS_NOT_SENT  0
+#define MBEDTLS_SSL_EARLY_DATA_STATUS_ACCEPTED  1
+#define MBEDTLS_SSL_EARLY_DATA_STATUS_REJECTED  2
+
+/**
+ * \def MBEDTLS_DEBUG_C
+ *
+ * Enable the debug functions.
+ *
+ * Module:  library/debug.c
+ * Caller:  library/ssl_msg.c
+ *          library/ssl_tls.c
+ *          library/ssl_tls12_*.c
+ *          library/ssl_tls13_*.c
+ *
+ * This module provides debugging functions.
+ */
+#define MBEDTLS_DEBUG_C
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 ephemeral key exchange mode.
+ *
+ * Requires: MBEDTLS_ECDH_C, MBEDTLS_X509_CRT_PARSE_C, MBEDTLS_ECDSA_C or
+ *           MBEDTLS_PKCS1_V21
+ *
+ * Comment to disable support for the ephemeral key exchange mode in TLS 1.3.
+ * If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
+ *
+ * Enable TLS 1.3 middlebox compatibility mode.
+ *
+ * As specified in Section D.4 of RFC 8446, TLS 1.3 offers a compatibility
+ * mode to make a TLS 1.3 connection more likely to pass through middle boxes
+ * expecting TLS 1.2 traffic.
+ *
+ * Turning on the compatibility mode comes at the cost of a few added bytes
+ * on the wire, but it doesn't affect compatibility with TLS 1.3 implementations
+ * that don't use it. Therefore, unless transmission bandwidth is critical and
+ * you know that middlebox compatibility issues won't occur, it is therefore
+ * recommended to set this option.
+ *
+ * Comment to disable compatibility mode for TLS 1.3. If
+ * MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+//#define MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
+
+#if defined(MBEDTLS_PLATFORM_MS_TIME_TYPE_MACRO)
+typedef MBEDTLS_PLATFORM_MS_TIME_TYPE_MACRO mbedtls_ms_time_t;
+#else
+#include <stdint.h>
+#include <inttypes.h>
+typedef int64_t mbedtls_ms_time_t;
+#endif /* MBEDTLS_PLATFORM_MS_TIME_TYPE_MACRO */
+
+/**
+ * \brief   Get time in milliseconds.
+ *
+ * \return Monotonically-increasing current time in milliseconds.
+ *
+ * \note Define MBEDTLS_PLATFORM_MS_TIME_ALT to be able to provide an
+ *       alternative implementation
+ *
+ * \warning This function returns a monotonically-increasing time value from a
+ *          start time that will differ from platform to platform, and possibly
+ *          from run to run of the process.
+ *
+ */
+mbedtls_ms_time_t mbedtls_ms_time(void);
+
 #if defined(MBEDTLS_SSL_CLI_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include <string.h>
@@ -697,7 +929,17 @@ static int ssl_tls13_early_data_has_valid_ticket(mbedtls_ssl_context *ssl)
            mbedtls_ssl_tls13_cipher_suite_is_offered(
         ssl, session->ciphersuite);
 }
+// static int ssl_tls13_early_data_has_valid_ticket(mbedtls_ssl_context *ssl)
+// {
+//     mbedtls_ssl_session *session = ssl->session_negotiate;
+//     return ssl->handshake->resume &&
+//            session->tls_version == MBEDTLS_SSL_VERSION_TLS1_3 &&
+//            mbedtls_ssl_session_ticket_allow_early_data(session) &&
+//            mbedtls_ssl_tls13_cipher_suite_is_offered(ssl, session->ciphersuite);
+// }
 #endif
+
+
 
 MBEDTLS_CHECK_RETURN_CRITICAL
 static int ssl_tls13_ticket_get_identity(mbedtls_ssl_context *ssl,
@@ -2230,6 +2472,45 @@ static int ssl_tls13_process_encrypted_extensions(mbedtls_ssl_context *ssl)
 #if defined(MBEDTLS_SSL_EARLY_DATA)
     if (ssl->handshake->received_extensions &
         MBEDTLS_SSL_EXT_MASK(EARLY_DATA)) {
+
+ /* RFC8446 4.2.11
+         * If the server supplies an "early_data" extension, the
+         * client MUST verify that the server's selected_identity
+         * is 0. If any other value is returned, the client MUST
+         * abort the handshake with an "illegal_parameter" alert.
+         *
+         * RFC 8446 4.2.10
+         * In order to accept early data, the server MUST have accepted a PSK
+         * cipher suite and selected the first key offered in the client's
+         * "pre_shared_key" extension. In addition, it MUST verify that the
+         * following values are the same as those associated with the
+         * selected PSK:
+         * - The TLS version number
+         * - The selected cipher suite
+         * - The selected ALPN [RFC7301] protocol, if any
+         *
+         * The server has sent an early data extension in its Encrypted
+         * Extension message thus accepted to receive early data. We
+         * check here that the additional constraints on the handshake
+         * parameters, when early data are exchanged, are met,
+         * namely:
+         * - a PSK has been selected for the handshake
+         * - the selected PSK for the handshake was the first one proposed
+         *   by the client.
+         * - the selected ciphersuite for the handshake is the ciphersuite
+         *   associated with the selected PSK.
+         */
+        if ((!mbedtls_ssl_tls13_key_exchange_mode_with_psk(ssl)) ||
+            handshake->selected_identity != 0 ||
+            handshake->ciphersuite_info->id !=
+            ssl->session_negotiate->ciphersuite) {
+
+            MBEDTLS_SSL_PEND_FATAL_ALERT(
+                MBEDTLS_SSL_ALERT_MSG_ILLEGAL_PARAMETER,
+                MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER);
+            return MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER;
+        }
+            
         ssl->early_data_status = MBEDTLS_SSL_EARLY_DATA_STATUS_ACCEPTED;
     }
 #endif
@@ -2779,6 +3060,12 @@ static int ssl_tls13_parse_new_session_ticket(mbedtls_ssl_context *ssl,
     MBEDTLS_SSL_DEBUG_MSG(3,
                           ("ticket_lifetime: %u",
                            (unsigned int) session->ticket_lifetime));
+
+    if (session->ticket_lifetime >
+        MBEDTLS_SSL_TLS1_3_MAX_ALLOWED_TICKET_LIFETIME) {
+        MBEDTLS_SSL_DEBUG_MSG(3, ("ticket_lifetime exceeds 7 days."));
+        return MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER;
+    }
 
     session->ticket_age_add = MBEDTLS_GET_UINT32_BE(p, 4);
     MBEDTLS_SSL_DEBUG_MSG(3,
