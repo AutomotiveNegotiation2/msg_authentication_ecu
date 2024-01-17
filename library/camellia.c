@@ -264,7 +264,7 @@ static void camellia_feistel(const uint32_t x[2], const uint32_t k[2],
     uint32_t I0, I1;
     I0 = x[0] ^ k[0];
     I1 = x[1] ^ k[1];
-
+#if 0
     I0 = ((uint32_t) SBOX1(MBEDTLS_BYTE_3(I0)) << 24) |
          ((uint32_t) SBOX2(MBEDTLS_BYTE_2(I0)) << 16) |
          ((uint32_t) SBOX3(MBEDTLS_BYTE_1(I0)) <<  8) |
@@ -273,7 +273,16 @@ static void camellia_feistel(const uint32_t x[2], const uint32_t k[2],
          ((uint32_t) SBOX3(MBEDTLS_BYTE_2(I1)) << 16) |
          ((uint32_t) SBOX4(MBEDTLS_BYTE_1(I1)) <<  8) |
          ((uint32_t) SBOX1(MBEDTLS_BYTE_0(I1)));
-
+#else		 
+    I1 = ((uint32_t) SBOX1(MBEDTLS_BYTE_3(I0)) << 24) |
+         ((uint32_t) SBOX2(MBEDTLS_BYTE_2(I0)) << 16) |
+         ((uint32_t) SBOX3(MBEDTLS_BYTE_1(I0)) <<  8) |
+         ((uint32_t) SBOX4(MBEDTLS_BYTE_0(I0)));
+    I0 = ((uint32_t) SBOX2(MBEDTLS_BYTE_3(I1)) << 24) |
+         ((uint32_t) SBOX3(MBEDTLS_BYTE_2(I1)) << 16) |
+         ((uint32_t) SBOX4(MBEDTLS_BYTE_1(I1)) <<  8) |
+         ((uint32_t) SBOX1(MBEDTLS_BYTE_0(I1)));
+#endif
     I0 ^= (I1 << 8) | (I1 >> 24);
     I1 ^= (I0 << 16) | (I0 >> 16);
     I0 ^= (I1 >> 8) | (I1 << 24);
