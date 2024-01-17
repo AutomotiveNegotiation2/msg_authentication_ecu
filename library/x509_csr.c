@@ -604,7 +604,10 @@ void mbedtls_x509_csr_init(mbedtls_x509_csr *csr)
     {
         ret_val = 1;
     }
-    memset(csr, 0, sizeof(mbedtls_x509_csr));
+    else
+    {
+       memset(csr, 0, sizeof(mbedtls_x509_csr));
+    }
     if(ret_val)
     {
          return 1;
