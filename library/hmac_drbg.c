@@ -62,43 +62,205 @@ int mbedtls_hmac_drbg_update(mbedtls_hmac_drbg_context *ctx,
     unsigned char K[MBEDTLS_MD_MAX_SIZE];
     int ret = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
 
-    for (sep[0] = 0; sep[0] < rounds; sep[0]++) {
+    for (sep[0] = 0; sep[0] < rounds; sep[0]++)
+    {
         /* Step 1 or 4 */
-        if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0) {
+        if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0)
+        {
             goto exit;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                          ctx->V, md_len)) != 0) {
+                                          ctx->V, md_len)) != 0)
+        {
             goto exit;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                          sep, 1)) != 0) {
+                                          sep, 1)) != 0)
+        {
             goto exit;
         }
-        if (rounds == 2) {
+        if (rounds == 2)
+        {
             if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                              additional, add_len)) != 0) {
+                                              additional, add_len)) != 0)
+            {
                 goto exit;
             }
         }
-        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) != 0) {
+        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) != 0)
+        {
             goto exit;
         }
 
         /* Step 2 or 5 */
-        if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) != 0) {
+        if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) != 0)
+        {
             goto exit;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                          ctx->V, md_len)) != 0) {
+                                          ctx->V, md_len)) != 0)
+        {
             goto exit;
         }
-        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) != 0) {
+        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) != 0)
+        {
             goto exit;
         }
     }
 
 exit:
+    mbedtls_platform_zeroize(K, sizeof(K));
+    return ret;
+}
+/*
+ * HMAC_DRBG finish, using optional additional data (10.1.2.2)
+ */
+static int mbedtls_hmac_drbg_finish(mbedtls_hmac_drbg_context *ctx,
+                                    const unsigned char *additional,
+                                    size_t add_len)
+{
+    size_t md_len = 0u;
+    unsigned char rounds = ((additional != NULL) && (add_len != 0)) ? 2 : 1;
+    unsigned char sep[2];
+    unsigned char K[MBEDTLS_MD_MAX_SIZE];
+    int32_t ret = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
+
+    if ((ctx != NULL) && (additional != NULL) && (add_len > 0u))
+    {
+        md_len = mbedtls_md_get_size(ctx->md_ctx.md_info);
+
+        for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++)
+        {
+            if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) == 0u)
+            { /* Step 1 or 4 */
+                if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
+                {
+                    if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, sep, 1u)) == 0u)
+                    {
+                        if (rounds == 2u)
+                        {
+                            if (((ret = mbedtls_md_hmac_update(&ctx->md_ctx, additional, add_len))) == 0u)
+                            {
+                                if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0)
+                                {
+                                    if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
+                                    { /* Step 2 or 5 */
+                                        if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
+                                        {
+                                            {
+                                            }
+                                            if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u)
+                                            {
+                                                ;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0)
+                            {
+                                if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
+                                { /* Step 2 or 5 */
+                                    if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
+                                    {
+                                        {
+                                        }
+                                        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u)
+                                        {
+                                            ;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    mbedtls_platform_zeroize(K, sizeof(K));
+    return ret;
+}
+
+static int mbedtls_hmac_drbg_finish_dbg(    mbedtls_hmac_drbg_context   *ctx,
+                                            const unsigned char         *additional,
+                                            size_t                      add_len)
+{
+    size_t      md_len      = 0u;
+    uint8_t     rounds      = ((additional != NULL) && (add_len != 0)) ? 2 : 1;
+    uint8_t     sep[2];
+    uint8_t     K[MBEDTLS_MD_MAX_SIZE];
+    int32_t     ret         = MBEDTLS_ERR_MD_BAD_INPUT_DATA;
+
+    if ((ctx != NULL) && (additional != NULL) && (add_len != 0u))
+    {
+        md_len  = mbedtls_md_get_size(ctx->md_ctx.md_info);
+        mbedtls_printf("md_len = %d\n", md_len);                                                // after debugging is completed, please remove this line
+
+        for (sep[0u] = 0u; sep[0u] < rounds; sep[0u]++)
+        {
+            if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) == 0u)
+            {   /* Step 1 or 4 */
+                mbedtls_printf(" Passed 1.\n");                                                 // after debugging is completed, please remove this line.
+                if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
+                {
+                    mbedtls_printf(" Passed 1.1\n");
+                    if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, sep, 1u)) == 0u)
+                    {
+                        mbedtls_printf(" Passed 1.1.1\n");                                      // after debugging is completed, plix remove this line.
+                        if (rounds == 2u)
+                        {
+                            if (((ret = mbedtls_md_hmac_update(&ctx->md_ctx, additional, add_len))) == 0u)
+                            {
+                                mbedtls_printf(" Passed 1.1.1.1\n");                            // after debugging is completed, plix remove this line.
+                                if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0)
+                                {
+                                    mbedtls_printf(" Passed 1.1.1.1.1\n");                      // after debugging is completed, plix remove this line.
+                                    if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
+                                    {   /* Step 2 or 5 */
+                                        mbedtls_printf("Passed 1.1.1.1.1.1\n");                 // after debugging is completed, plix remove this line.
+                                        if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
+                                        {
+                                            mbedtls_printf(P "assed 1.1.1.1.1.1.1\n");          // after debugging is completed, plix remove this line.
+                                            if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u)
+                                            {
+                                                mbedtls_printf("Passed 1.1.1.1.1.1.1.1\n");     // after debugging is completed, plix remove this line.
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, K)) == 0)
+                            {
+                                mbedtls_printf("Passed 1.1.1.2\n");                             // after debugging is completed, plix remove this line.
+                                if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, K, md_len)) == 0u)
+                                {   /* Step 2 or 5 */
+                                    mbedtls_printf("Passed 1.1.1.2.1\n");                       // after debugging is completed, plix remove this line.
+                                    if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx, ctx->V, md_len)) == 0u)
+                                    {
+                                        mbedtls_printf("Passed 1.1.1.2.1.1\n");                 // after debugging is completed, plix remove this line.
+                                        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) == 0u)
+                                        {
+                                            mbedtls_printf("Passed 1.1.1.2.1.1.1\n");           // after debugging is completed, plix remove this line.
+                                        }
+                                        mbedtls_printf("Passed 1.1.1.2.1.1.2\n");               // after debugging is completed, plix remove this line.
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     mbedtls_platform_zeroize(K, sizeof(K));
     return ret;
 }
@@ -112,7 +274,8 @@ int mbedtls_hmac_drbg_seed_buf(mbedtls_hmac_drbg_context *ctx,
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
-    if ((ret = mbedtls_md_setup(&ctx->md_ctx, md_info, 1)) != 0) {
+    if ((ret = mbedtls_md_setup(&ctx->md_ctx, md_info, 1)) != 0)
+    {
         return ret;
     }
 
@@ -126,12 +289,14 @@ int mbedtls_hmac_drbg_seed_buf(mbedtls_hmac_drbg_context *ctx,
      * MD context with an all-zero key. Then set V to its initial value.
      */
     if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, ctx->V,
-                                      mbedtls_md_get_size(md_info))) != 0) {
+                                      mbedtls_md_get_size(md_info))) != 0)
+    {
         return ret;
     }
     memset(ctx->V, 0x01, mbedtls_md_get_size(md_info));
 
-    if ((ret = mbedtls_hmac_drbg_update(ctx, data, data_len)) != 0) {
+    if ((ret = mbedtls_hmac_drbg_update(ctx, data, data_len)) != 0)
+    {
         return ret;
     }
 
@@ -154,15 +319,19 @@ static int hmac_drbg_reseed_core(mbedtls_hmac_drbg_context *ctx,
     {
         size_t total_entropy_len;
 
-        if (use_nonce == 0) {
+        if (use_nonce == 0)
+        {
             total_entropy_len = ctx->entropy_len;
-        } else {
+        }
+        else
+        {
             total_entropy_len = ctx->entropy_len * 3 / 2;
         }
 
         /* III. Check input length */
         if (len > MBEDTLS_HMAC_DRBG_MAX_INPUT ||
-            total_entropy_len + len > MBEDTLS_HMAC_DRBG_MAX_SEED_INPUT) {
+            total_entropy_len + len > MBEDTLS_HMAC_DRBG_MAX_SEED_INPUT)
+        {
             return MBEDTLS_ERR_HMAC_DRBG_INPUT_TOO_BIG;
         }
     }
@@ -171,14 +340,16 @@ static int hmac_drbg_reseed_core(mbedtls_hmac_drbg_context *ctx,
 
     /* IV. Gather entropy_len bytes of entropy for the seed */
     if ((ret = ctx->f_entropy(ctx->p_entropy,
-                              seed, ctx->entropy_len)) != 0) {
+                              seed, ctx->entropy_len)) != 0)
+    {
         return MBEDTLS_ERR_HMAC_DRBG_ENTROPY_SOURCE_FAILED;
     }
     seedlen += ctx->entropy_len;
 
     /* For initial seeding, allow adding of nonce generated
      * from the entropy source. See Sect 8.6.7 in SP800-90A. */
-    if (use_nonce) {
+    if (use_nonce)
+    {
         /* Note: We don't merge the two calls to f_entropy() in order
          *       to avoid requesting too much entropy from f_entropy()
          *       at once. Specifically, if the underlying digest is not
@@ -188,22 +359,24 @@ static int hmac_drbg_reseed_core(mbedtls_hmac_drbg_context *ctx,
          *       call in configurations disabling SHA-512. */
         if ((ret = ctx->f_entropy(ctx->p_entropy,
                                   seed + seedlen,
-                                  ctx->entropy_len / 2)) != 0) {
+                                  ctx->entropy_len / 2)) != 0)
+        {
             return MBEDTLS_ERR_HMAC_DRBG_ENTROPY_SOURCE_FAILED;
         }
 
         seedlen += ctx->entropy_len / 2;
     }
 
-
     /* 1. Concatenate entropy and additional data if any */
-    if (additional != NULL && len != 0) {
+    if (additional != NULL && len != 0)
+    {
         memcpy(seed + seedlen, additional, len);
         seedlen += len;
     }
 
     /* 2. Update state */
-    if ((ret = mbedtls_hmac_drbg_update(ctx, seed, seedlen)) != 0) {
+    if ((ret = mbedtls_hmac_drbg_update(ctx, seed, seedlen)) != 0)
+    {
         goto exit;
     }
 
@@ -241,7 +414,8 @@ int mbedtls_hmac_drbg_seed(mbedtls_hmac_drbg_context *ctx,
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     size_t md_size;
 
-    if ((ret = mbedtls_md_setup(&ctx->md_ctx, md_info, 1)) != 0) {
+    if ((ret = mbedtls_md_setup(&ctx->md_ctx, md_info, 1)) != 0)
+    {
         return ret;
     }
 
@@ -257,7 +431,8 @@ int mbedtls_hmac_drbg_seed(mbedtls_hmac_drbg_context *ctx,
      * Use the V memory location, which is currently all 0, to initialize the
      * MD context with an all-zero key. Then set V to its initial value.
      */
-    if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, ctx->V, md_size)) != 0) {
+    if ((ret = mbedtls_md_hmac_starts(&ctx->md_ctx, ctx->V, md_size)) != 0)
+    {
         return ret;
     }
     memset(ctx->V, 0x01, md_size);
@@ -265,7 +440,8 @@ int mbedtls_hmac_drbg_seed(mbedtls_hmac_drbg_context *ctx,
     ctx->f_entropy = f_entropy;
     ctx->p_entropy = p_entropy;
 
-    if (ctx->entropy_len == 0) {
+    if (ctx->entropy_len == 0)
+    {
         /*
          * See SP800-57 5.6.1 (p. 65-66) for the security strength provided by
          * each hash function, then according to SP800-90A rev1 10.1 table 2,
@@ -274,12 +450,14 @@ int mbedtls_hmac_drbg_seed(mbedtls_hmac_drbg_context *ctx,
          * (This also matches the sizes used in the NIST test vectors.)
          */
         ctx->entropy_len = md_size <= 20 ? 16 : /* 160-bits hash -> 128 bits */
-                           md_size <= 28 ? 24 : /* 224-bits hash -> 192 bits */
-                           32;  /* better (256+) -> 256 bits */
+                               md_size <= 28 ? 24
+                                             : /* 224-bits hash -> 192 bits */
+                               32;             /* better (256+) -> 256 bits */
     }
 
     if ((ret = hmac_drbg_reseed_core(ctx, custom, len,
-                                     1 /* add nonce */)) != 0) {
+                                     1 /* add nonce */)) != 0)
+    {
         return ret;
     }
 
@@ -320,26 +498,30 @@ int mbedtls_hmac_drbg_random_with_add(void *p_rng,
                                       const unsigned char *additional, size_t add_len)
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-    mbedtls_hmac_drbg_context *ctx = (mbedtls_hmac_drbg_context *) p_rng;
+    mbedtls_hmac_drbg_context *ctx = (mbedtls_hmac_drbg_context *)p_rng;
     size_t md_len = mbedtls_md_get_size(ctx->md_ctx.md_info);
     size_t left = out_len;
     unsigned char *out = output;
 
     /* II. Check request length */
-    if (out_len > MBEDTLS_HMAC_DRBG_MAX_REQUEST) {
+    if (out_len > MBEDTLS_HMAC_DRBG_MAX_REQUEST)
+    {
         return MBEDTLS_ERR_HMAC_DRBG_REQUEST_TOO_BIG;
     }
 
     /* III. Check input length */
-    if (add_len > MBEDTLS_HMAC_DRBG_MAX_INPUT) {
+    if (add_len > MBEDTLS_HMAC_DRBG_MAX_INPUT)
+    {
         return MBEDTLS_ERR_HMAC_DRBG_INPUT_TOO_BIG;
     }
 
     /* 1. (aka VII and IX) Check reseed counter and PR */
     if (ctx->f_entropy != NULL && /* For no-reseeding instances */
         (ctx->prediction_resistance == MBEDTLS_HMAC_DRBG_PR_ON ||
-         ctx->reseed_counter > ctx->reseed_interval)) {
-        if ((ret = mbedtls_hmac_drbg_reseed(ctx, additional, add_len)) != 0) {
+         ctx->reseed_counter > ctx->reseed_interval))
+    {
+        if ((ret = mbedtls_hmac_drbg_reseed(ctx, additional, add_len)) != 0)
+        {
             return ret;
         }
 
@@ -347,25 +529,31 @@ int mbedtls_hmac_drbg_random_with_add(void *p_rng,
     }
 
     /* 2. Use additional data if any */
-    if (additional != NULL && add_len != 0) {
+    if (additional != NULL && add_len != 0)
+    {
         if ((ret = mbedtls_hmac_drbg_update(ctx,
-                                            additional, add_len)) != 0) {
+                                            additional, add_len)) != 0)
+        {
             goto exit;
         }
     }
 
     /* 3, 4, 5. Generate bytes */
-    while (left != 0) {
+    while (left != 0)
+    {
         size_t use_len = left > md_len ? md_len : left;
 
-        if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0) {
+        if ((ret = mbedtls_md_hmac_reset(&ctx->md_ctx)) != 0)
+        {
             goto exit;
         }
         if ((ret = mbedtls_md_hmac_update(&ctx->md_ctx,
-                                          ctx->V, md_len)) != 0) {
+                                          ctx->V, md_len)) != 0)
+        {
             goto exit;
         }
-        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) != 0) {
+        if ((ret = mbedtls_md_hmac_finish(&ctx->md_ctx, ctx->V)) != 0)
+        {
             goto exit;
         }
 
@@ -376,7 +564,8 @@ int mbedtls_hmac_drbg_random_with_add(void *p_rng,
 
     /* 6. Update */
     if ((ret = mbedtls_hmac_drbg_update(ctx,
-                                        additional, add_len)) != 0) {
+                                        additional, add_len)) != 0)
+    {
         goto exit;
     }
 
@@ -394,10 +583,11 @@ exit:
 int mbedtls_hmac_drbg_random(void *p_rng, unsigned char *output, size_t out_len)
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-    mbedtls_hmac_drbg_context *ctx = (mbedtls_hmac_drbg_context *) p_rng;
+    mbedtls_hmac_drbg_context *ctx = (mbedtls_hmac_drbg_context *)p_rng;
 
 #if defined(MBEDTLS_THREADING_C)
-    if ((ret = mbedtls_mutex_lock(&ctx->mutex)) != 0) {
+    if ((ret = mbedtls_mutex_lock(&ctx->mutex)) != 0)
+    {
         return ret;
     }
 #endif
@@ -405,7 +595,8 @@ int mbedtls_hmac_drbg_random(void *p_rng, unsigned char *output, size_t out_len)
     ret = mbedtls_hmac_drbg_random_with_add(ctx, output, out_len, NULL, 0);
 
 #if defined(MBEDTLS_THREADING_C)
-    if (mbedtls_mutex_unlock(&ctx->mutex) != 0) {
+    if (mbedtls_mutex_unlock(&ctx->mutex) != 0)
+    {
         return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
     }
 #endif
@@ -419,13 +610,15 @@ int mbedtls_hmac_drbg_random(void *p_rng, unsigned char *output, size_t out_len)
  */
 void mbedtls_hmac_drbg_free(mbedtls_hmac_drbg_context *ctx)
 {
-    if (ctx == NULL) {
+    if (ctx == NULL)
+    {
         return;
     }
 
 #if defined(MBEDTLS_THREADING_C)
     /* The mutex is initialized iff the md context is set up. */
-    if (ctx->md_ctx.md_info != NULL) {
+    if (ctx->md_ctx.md_info != NULL)
+    {
         mbedtls_mutex_free(&ctx->mutex);
     }
 #endif
@@ -441,18 +634,21 @@ int mbedtls_hmac_drbg_write_seed_file(mbedtls_hmac_drbg_context *ctx, const char
     FILE *f;
     unsigned char buf[MBEDTLS_HMAC_DRBG_MAX_INPUT];
 
-    if ((f = fopen(path, "wb")) == NULL) {
+    if ((f = fopen(path, "wb")) == NULL)
+    {
         return MBEDTLS_ERR_HMAC_DRBG_FILE_IO_ERROR;
     }
 
     /* Ensure no stdio buffering of secrets, as such buffers cannot be wiped. */
     mbedtls_setbuf(f, NULL);
 
-    if ((ret = mbedtls_hmac_drbg_random(ctx, buf, sizeof(buf))) != 0) {
+    if ((ret = mbedtls_hmac_drbg_random(ctx, buf, sizeof(buf))) != 0)
+    {
         goto exit;
     }
 
-    if (fwrite(buf, 1, sizeof(buf), f) != sizeof(buf)) {
+    if (fwrite(buf, 1, sizeof(buf), f) != sizeof(buf))
+    {
         ret = MBEDTLS_ERR_HMAC_DRBG_FILE_IO_ERROR;
         goto exit;
     }
@@ -474,7 +670,8 @@ int mbedtls_hmac_drbg_update_seed_file(mbedtls_hmac_drbg_context *ctx, const cha
     unsigned char buf[MBEDTLS_HMAC_DRBG_MAX_INPUT];
     unsigned char c;
 
-    if ((f = fopen(path, "rb")) == NULL) {
+    if ((f = fopen(path, "rb")) == NULL)
+    {
         return MBEDTLS_ERR_HMAC_DRBG_FILE_IO_ERROR;
     }
 
@@ -482,11 +679,13 @@ int mbedtls_hmac_drbg_update_seed_file(mbedtls_hmac_drbg_context *ctx, const cha
     mbedtls_setbuf(f, NULL);
 
     n = fread(buf, 1, sizeof(buf), f);
-    if (fread(&c, 1, 1, f) != 0) {
+    if (fread(&c, 1, 1, f) != 0)
+    {
         ret = MBEDTLS_ERR_HMAC_DRBG_INPUT_TOO_BIG;
         goto exit;
     }
-    if (n == 0 || ferror(f)) {
+    if (n == 0 || ferror(f))
+    {
         ret = MBEDTLS_ERR_HMAC_DRBG_FILE_IO_ERROR;
         goto exit;
     }
@@ -497,16 +696,20 @@ int mbedtls_hmac_drbg_update_seed_file(mbedtls_hmac_drbg_context *ctx, const cha
 
 exit:
     mbedtls_platform_zeroize(buf, sizeof(buf));
-    if (f != NULL) {
+    if (f != NULL)
+    {
         fclose(f);
     }
-    if (ret != 0) {
+    if (ret != 0)
+    {
         return ret;
     }
-    return mbedtls_hmac_drbg_write_seed_file(ctx, path);
+    else
+    {
+        return mbedtls_hmac_drbg_write_seed_file(ctx, path);
+    }
 }
 #endif /* MBEDTLS_FS_IO */
-
 
 #if defined(MBEDTLS_SELF_TEST)
 
@@ -514,12 +717,12 @@ exit:
 /* Dummy checkup routine */
 int mbedtls_hmac_drbg_self_test(int verbose)
 {
-    (void) verbose;
+    (void)verbose;
     return 0;
 }
 #else
 
-#define OUTPUT_LEN  80
+#define OUTPUT_LEN 80
 
 /* From a NIST PR=true test vector */
 static const unsigned char entropy_pr[] = {
@@ -527,8 +730,7 @@ static const unsigned char entropy_pr[] = {
     0xf7, 0x3e, 0x9c, 0x5b, 0x64, 0xef, 0xd8, 0xca, 0x02, 0x8c, 0xf8, 0x11,
     0x48, 0xa5, 0x84, 0xfe, 0x69, 0xab, 0x5a, 0xee, 0x42, 0xaa, 0x4d, 0x42,
     0x17, 0x60, 0x99, 0xd4, 0x5e, 0x13, 0x97, 0xdc, 0x40, 0x4d, 0x86, 0xa3,
-    0x7b, 0xf5, 0x59, 0x54, 0x75, 0x69, 0x51, 0xe4
-};
+    0x7b, 0xf5, 0x59, 0x54, 0x75, 0x69, 0x51, 0xe4};
 static const unsigned char result_pr[OUTPUT_LEN] = {
     0x9a, 0x00, 0xa2, 0xd0, 0x0e, 0xd5, 0x9b, 0xfe, 0x31, 0xec, 0xb1, 0x39,
     0x9b, 0x60, 0x81, 0x48, 0xd1, 0x96, 0x9d, 0x25, 0x0d, 0x3c, 0x1e, 0x94,
@@ -536,16 +738,14 @@ static const unsigned char result_pr[OUTPUT_LEN] = {
     0x73, 0x19, 0x70, 0xc0, 0x10, 0x7a, 0xa4, 0x89, 0x25, 0x19, 0x95, 0x5e,
     0x4b, 0xc6, 0x00, 0x1d, 0x7f, 0x4e, 0x6a, 0x2b, 0xf8, 0xa3, 0x01, 0xab,
     0x46, 0x05, 0x5c, 0x09, 0xa6, 0x71, 0x88, 0xf1, 0xa7, 0x40, 0xee, 0xf3,
-    0xe1, 0x5c, 0x02, 0x9b, 0x44, 0xaf, 0x03, 0x44
-};
+    0xe1, 0x5c, 0x02, 0x9b, 0x44, 0xaf, 0x03, 0x44};
 
 /* From a NIST PR=false test vector */
 static const unsigned char entropy_nopr[] = {
     0x79, 0x34, 0x9b, 0xbf, 0x7c, 0xdd, 0xa5, 0x79, 0x95, 0x57, 0x86, 0x66,
     0x21, 0xc9, 0x13, 0x83, 0x11, 0x46, 0x73, 0x3a, 0xbf, 0x8c, 0x35, 0xc8,
     0xc7, 0x21, 0x5b, 0x5b, 0x96, 0xc4, 0x8e, 0x9b, 0x33, 0x8c, 0x74, 0xe3,
-    0xe9, 0x9d, 0xfe, 0xdf
-};
+    0xe9, 0x9d, 0xfe, 0xdf};
 static const unsigned char result_nopr[OUTPUT_LEN] = {
     0xc6, 0xa1, 0x6a, 0xb8, 0xd4, 0x20, 0x70, 0x6f, 0x0f, 0x34, 0xab, 0x7f,
     0xec, 0x5a, 0xdc, 0xa9, 0xd8, 0xca, 0x3a, 0x13, 0x3e, 0x15, 0x9c, 0xa6,
@@ -553,8 +753,7 @@ static const unsigned char result_nopr[OUTPUT_LEN] = {
     0xff, 0xb1, 0x0d, 0x71, 0x94, 0xf1, 0xc1, 0xa5, 0xcf, 0x73, 0x22, 0xec,
     0x1a, 0xe0, 0x96, 0x4e, 0xd4, 0xbf, 0x12, 0x27, 0x46, 0xe0, 0x87, 0xfd,
     0xb5, 0xb3, 0xe9, 0x1b, 0x34, 0x93, 0xd5, 0xbb, 0x98, 0xfa, 0xed, 0x49,
-    0xe8, 0x5f, 0x13, 0x0f, 0xc8, 0xa4, 0x59, 0xb7
-};
+    0xe8, 0x5f, 0x13, 0x0f, 0xc8, 0xa4, 0x59, 0xb7};
 
 /* "Entropy" from buffer */
 static size_t test_offset;
@@ -567,11 +766,12 @@ static int hmac_drbg_self_test_entropy(void *data,
     return 0;
 }
 
-#define CHK(c)    if ((c) != 0)                          \
-    {                                       \
-        if (verbose != 0)                  \
-        mbedtls_printf("failed\n");  \
-        return 1;                        \
+#define CHK(c)                          \
+    if ((c) != 0)                       \
+    {                                   \
+        if (verbose != 0)               \
+            mbedtls_printf("failed\n"); \
+        return 1;                       \
     }
 
 /*
@@ -588,13 +788,14 @@ int mbedtls_hmac_drbg_self_test(int verbose)
     /*
      * PR = True
      */
-    if (verbose != 0) {
+    if (verbose != 0)
+    {
         mbedtls_printf("  HMAC_DRBG (PR = True) : ");
     }
 
     test_offset = 0;
     CHK(mbedtls_hmac_drbg_seed(&ctx, md_info,
-                               hmac_drbg_self_test_entropy, (void *) entropy_pr,
+                               hmac_drbg_self_test_entropy, (void *)entropy_pr,
                                NULL, 0));
     mbedtls_hmac_drbg_set_prediction_resistance(&ctx, MBEDTLS_HMAC_DRBG_PR_ON);
     CHK(mbedtls_hmac_drbg_random(&ctx, buf, OUTPUT_LEN));
@@ -604,14 +805,16 @@ int mbedtls_hmac_drbg_self_test(int verbose)
 
     mbedtls_hmac_drbg_free(&ctx);
 
-    if (verbose != 0) {
+    if (verbose != 0)
+    {
         mbedtls_printf("passed\n");
     }
 
     /*
      * PR = False
      */
-    if (verbose != 0) {
+    if (verbose != 0)
+    {
         mbedtls_printf("  HMAC_DRBG (PR = False) : ");
     }
 
@@ -619,7 +822,7 @@ int mbedtls_hmac_drbg_self_test(int verbose)
 
     test_offset = 0;
     CHK(mbedtls_hmac_drbg_seed(&ctx, md_info,
-                               hmac_drbg_self_test_entropy, (void *) entropy_nopr,
+                               hmac_drbg_self_test_entropy, (void *)entropy_nopr,
                                NULL, 0));
     CHK(mbedtls_hmac_drbg_reseed(&ctx, NULL, 0));
     CHK(mbedtls_hmac_drbg_random(&ctx, buf, OUTPUT_LEN));
@@ -629,11 +832,13 @@ int mbedtls_hmac_drbg_self_test(int verbose)
 
     mbedtls_hmac_drbg_free(&ctx);
 
-    if (verbose != 0) {
+    if (verbose != 0)
+    {
         mbedtls_printf("passed\n");
     }
 
-    if (verbose != 0) {
+    if (verbose != 0)
+    {
         mbedtls_printf("\n");
     }
 
