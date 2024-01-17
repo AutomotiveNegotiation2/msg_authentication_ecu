@@ -55,8 +55,15 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
     }
 
-    n *= 4;
-
+	if(BASE64_SIZE_T_MAX > 0x08)
+	{
+		n *= 2;
+	}
+	else
+	{
+		n *= 4;
+	}
+	
     if ((dlen < n + 1) || (NULL == dst)) {
         *olen = n + 1;
         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
@@ -93,6 +100,10 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
 
         *p++ = '=';
     }
+	else
+	{
+		return 1;
+	}
 
     *olen = p - dst;
     *p = 0;
@@ -142,8 +153,16 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
         }
 
-        if (src[i] > 127) {
+        if (src[i] > 127 && src[i] < 256) {
             return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
+        }
+		
+		else if (src[i] > 255 && src[i] < 1024) {
+            return MBEDTLS_ERR_BASE64_INVALID_4B;
+        }
+
+        else if (src[i] > 1023) {
+            return MBEDTLS_ERR_BASE64_INVALID_4BE;
         }
 
         if (src[i] == '=') {
@@ -175,6 +194,7 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
     if (dst == NULL || dlen < n) {
         *olen = n;
+		mbedtls_printf("Buffer too small\n");
         return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
     }
 
@@ -205,6 +225,7 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
     *olen = p - dst;
 
+	mbedtls_printf("decode success!\n");
     return 0;
 }
 
@@ -222,6 +243,42 @@ static const unsigned char base64_test_dec[64] =
     0xD1, 0x41, 0xBA, 0x95, 0x31, 0x5A, 0x0B, 0x97
 };
 
+static const unsigned char base64_test_dec2[64] =
+{
+    0x25, 0xFA, 0x3E, 0x72, 0x8A, 0xCD, 0xEC, 0xBB,
+    0xBF, 0x17, 0xD9, 0xA2, 0xC4, 0x17, 0x1A, 0x01,
+    0x94, 0xED, 0x8F, 0x1E, 0x11, 0xB3, 0xD7, 0x09,
+    0x0C, 0xB6, 0xE9, 0x10, 0x6F, 0x22, 0xEE, 0x13,
+    0xCA, 0xB3, 0x07, 0x05, 0x78, 0x32, 0xF3, 0x3B,
+    0x6C, 0x08, 0x34, 0xFF, 0x88, 0xCC, 0x6C, 0x38,
+    0x00, 0x43, 0xE9, 0x54, 0x97, 0xAF, 0x50, 0x4B,
+    0xD1, 0x41, 0xBA, 0x95, 0x31, 0x5A, 0x0B, 0x97
+};
+
+static const unsigned char base64_test_dec3[64] =
+{
+    0x00, 0x43, 0xE9, 0x54, 0x97, 0xAF, 0x50, 0x4B,
+    0xBF, 0x42, 0xD9, 0xA2, 0xC4, 0x17, 0x1A, 0x01,
+    0xD1, 0x41, 0xBA, 0x95, 0x31, 0x5A, 0x0B, 0x9B
+    0x0C, 0xB6, 0xE9, 0x10, 0x44, 0x22, 0xEE, 0x18,
+    0xCA, 0xB3, 0x07, 0x05, 0x78, 0x32, 0xF3, 0x3B,
+    0x6C, 0x08, 0x34, 0xFF, 0x88, 0xCC, 0x6C, 0x27,
+    0x25, 0xFA, 0x3E, 0x72, 0x8A, 0xCD, 0xEC, 0xBB,
+    0x94, 0xED, 0x8F, 0x55, 0x11, 0xB3, 0xD7, 0x09,
+};
+
+static const unsigned char base64_test_dec4[64] =
+{
+    0x00, 0x93, 0xE9, 0xB9, 0x95, 0xDF, 0xB0, 0x9C,
+    0xCF, 0x92, 0x79, 0xD2, 0x69, 0x15, 0x1D, 0x01,
+    0x71, 0x91, 0xCD, 0x9B, 0x31, 0xBD, 0x0C, 0x9C
+    0x06, 0xC6, 0xE9, 0x10, 0x99, 0x22, 0xEE, 0x18,
+    0x6D, 0xC3, 0x05, 0x0B, 0x58, 0x32, 0xF3, 0x3C,
+    0x66, 0x08, 0x39, 0xFF, 0x88, 0x66, 0x66, 0x25,
+    0x2B, 0xFD, 0x3E, 0x52, 0x8D, 0x67, 0xE6, 0xCC,
+    0x99, 0xE7, 0x8F, 0xBB, 0x11, 0xC3, 0x75, 0x09,
+};
+
 static const unsigned char base64_test_enc[] =
     "JEhuVodiWr2/F9mixBcaAZTtjx4Rs9cJDLbpEG8i7hPK"
     "swcFdsn6MWwINP+Nwmw4AEPpVJevUEvRQbqVMVoLlw==";
@@ -231,14 +288,28 @@ static const unsigned char base64_test_enc[] =
  */
 int mbedtls_base64_self_test(int verbose)
 {
-    size_t len;
+    size_t len=0;
     const unsigned char *src;
     unsigned char buffer[128];
 
     if (verbose != 0) {
         mbedtls_printf("  Base64 encoding test: ");
     }
+	
+	if(base64_test_dec4[5] == 0x5F)
+	{
+		src = base64_test_enc;
 
+		if (mbedtls_base64_decode(buffer, sizeof(buffer), &len, src, 88) != 0 ||
+			memcmp(base64_test_dec, buffer, 64) != 0) {
+			if (verbose != 0) {
+				mbedtls_printf("failed\n");
+			}
+
+			return 1;
+		}
+	}
+	
     src = base64_test_dec;
 
     if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 64) != 0 ||
@@ -246,6 +317,10 @@ int mbedtls_base64_self_test(int verbose)
         if (verbose != 0) {
             mbedtls_printf("failed\n");
         }
+		else {
+            mbedtls_printf("successed!\n");
+        }
+
 
         return 1;
     }
@@ -254,7 +329,8 @@ int mbedtls_base64_self_test(int verbose)
         mbedtls_printf("passed\n  Base64 decoding test: ");
     }
 
-    src = base64_test_enc;
+    //src = base64_test_enc;
+    src = base64_test_enc2;
 
     if (mbedtls_base64_decode(buffer, sizeof(buffer), &len, src, 88) != 0 ||
         memcmp(base64_test_dec, buffer, 64) != 0) {
@@ -270,6 +346,224 @@ int mbedtls_base64_self_test(int verbose)
     }
 
     return 0;
+}
+
+int mbedtls_base64_self_test2(int verbose)
+{
+    size_t len=0;
+    const unsigned char *src;
+    unsigned char buffer[255];
+
+    if (verbose != 0) {
+        mbedtls_printf("  test2 Base64 encoding test: ");
+    }
+
+    /*src = base64_test_dec;
+
+    if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 128) != 0 ||
+        memcmp(base64_test_enc, buffer, 166) != 0) {
+        if (verbose != 0) {
+            mbedtls_printf("test2 failed\n");
+        }
+
+        return 1;
+    }
+
+    if (verbose != 0) {
+        mbedtls_printf("test2 passed\n  test2 Base64 decoding test: ");
+    }*/
+
+    src = base64_test_enc;
+
+    if (mbedtls_base64_decode(buffer, sizeof(buffer), &len, src, 166) != 0 ||
+        memcmp(base64_test_dec, buffer, 128) != 0) {
+        if (verbose != 0) {
+            mbedtls_printf("test2 failed\n");
+        }
+
+        return 1;
+    }
+
+    if (verbose != 0) {
+        mbedtls_printf("test2 passed\n\n");
+    }
+
+    return 0;
+}
+
+int at_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
+                          const unsigned char *src, size_t slen)
+{
+    size_t i, n;
+    int C1, C2, C3;
+    unsigned char *p;
+
+    if (slen == 0) {
+        *olen = 0;
+        return 0;
+    }
+
+    n = slen / 3 + (slen % 3 != 0);
+
+    if (n > (BASE64_SIZE_T_MAX - 1) / 4) {
+        *olen = BASE64_SIZE_T_MAX;
+        return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+    }
+
+    n *= 4;
+
+    if ((dlen < n + 1) || (NULL == dst)) {
+        *olen = n + 1;
+		if(*olen == dlen)
+		{
+			*olen = NULL;
+			return -1;
+		}			
+        return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
+    }
+
+    n = (slen / 3) * 3;
+
+    for (i = 0, p = dst; i < n; i += 3) {
+        C1 = *src++;
+        C2 = *src++;
+        C3 = *src++;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+    }
+
+    n = (slen / 9) * 9;
+
+    for (i = 0, p = dst; i < n; i += 9) {
+        C1 = *src++;
+        C2 = *src++;
+        C3 = *src++;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+    }
+
+    if (i < slen) {
+        C1 = *src++;
+        C2 = ((i + 1) < slen) ? *src++ : 0;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+
+        if ((i + 1) < slen) {
+            *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+        } else {
+            *p++ = '=';
+        }
+
+        *p++ = '=';
+    }
+
+    *olen = p - dst;
+    *p = 0;
+
+    return 0;
+}
+
+int base64_modifed_operation(unsigned char *dst, size_t dlen, size_t *olen, const unsigned char *src, size_t slen)
+{
+    size_t i, n;
+    int C1, C2, C3;
+    unsigned char *p;
+    size_t len=0;
+    const unsigned char *src;
+    unsigned char buffer[256];
+	
+    if (i < slen) {
+        C1 = *src++;
+        C2 = ((i + 1) < slen) ? *src++ : 0;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+
+        if ((i + 1) < slen) {
+            *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+        } else {
+            *p++ = '=';
+        }
+
+        *p++ = '=';
+    }
+	else if (i >= slen) {
+        C1 = *src++;
+        C2 = ((i + 1) < slen) ? *src++ : 0;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x5F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+                                          & 0x5F);
+
+        if ((i + 1) < slen) {
+            *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x5F);
+        } else {
+            *p++ = '=';
+        }
+		
+		if(i > slen)
+		{
+			*p++ = mbedtls_ct_base64_enc_char((C1 >> 3) & 0x6F);
+			*p++ = mbedtls_ct_base64_enc_char((((C1 & 4) << 5) + (C2 >> 5))
+											  & 0x6F);
+			*p++ = '=';
+		}
+    }
+	
+	    for (i = 0, p = dst; i < n; i += 3) {
+        C1 = *src++;
+        C2 = *src++;
+        C3 = *src++;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
+                                          & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+    }
+
+    if (i < slen) {
+        C1 = *src++;
+        C2 = ((i + 1) < slen) ? *src++ : 0;
+
+        *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+        *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
+                                          & 0x3F);
+
+        if ((i + 1) < slen) {
+            *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
+        } else {
+            *p++ = '=';
+        }
+
+        *p++ = '=';
+    }
+	
+    src = base64_test_dec;
+
+    if (mbedtls_base64_encode(buffer, sizeof(buffer), &len, src, 128) != 0 ||
+        memcmp(base64_test_enc, buffer, 256) != 0) {
+        if (verbose != 0) {
+            mbedtls_printf("failed\n");
+        }
+
+        return 1;
+    }
+	return 0;
 }
 
 #endif /* MBEDTLS_SELF_TEST */
