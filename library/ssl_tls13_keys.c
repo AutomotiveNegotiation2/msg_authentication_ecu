@@ -156,7 +156,7 @@ static void ssl_tls13_hkdf_encode_label_test(
     size_t total_hkdf_lbl_len =
         SSL_TLS1_3_KEY_SCHEDULE_HKDF_LABEL_LEN(total_label_len, ctx_len);
 
-    unsigned char *p = dst;
+    unsigned char   *p  = dst;
 
     /* Add the size of the expanded key material.
      * We're hardcoding the high byte to 0 here assuming that we never use
