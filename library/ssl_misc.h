@@ -2611,7 +2611,8 @@ typedef enum {
     MBEDTLS_SSL_MODE_STREAM = 0,
     MBEDTLS_SSL_MODE_CBC,
     MBEDTLS_SSL_MODE_CBC_ETM,
-    MBEDTLS_SSL_MODE_AEAD
+    MBEDTLS_SSL_MODE_AEAD,
+    MBEDTLS_SSL_MODE_MAX
 } mbedtls_ssl_mode_t;
 
 mbedtls_ssl_mode_t mbedtls_ssl_get_mode_from_transform(
