@@ -311,7 +311,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 #endif
 
 #if defined(MBEDTLS_CIPHER_MODE_CBC)
-#define MBEDTLS_SSL_PADDING_ADD            256
+#define MBEDTLS_SSL_PADDING_ADD            128
 #else
 #define MBEDTLS_SSL_PADDING_ADD              0
 #endif
