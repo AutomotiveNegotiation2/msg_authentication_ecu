@@ -176,7 +176,7 @@ static void ssl_tls13_hkdf_encode_label_test(
 
     /* Add context value */
     *p++    = MBEDTLS_BYTE_0(ctx_len);
-    if (ctx_len != 0) {
+    if (ctx_len != 0U) {
         (void)memcpy(p, ctx, ctx_len);
     }
 
