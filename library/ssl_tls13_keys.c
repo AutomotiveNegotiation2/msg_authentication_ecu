@@ -169,9 +169,9 @@ static void ssl_tls13_hkdf_encode_label_test(
 
     /* Add label incl. prefix */
     *p++    = MBEDTLS_BYTE_0(total_label_len);
-    memcpy(p, tls13_label_prefix, sizeof(tls13_label_prefix));
+    (void)memcpy(p, tls13_label_prefix, sizeof(tls13_label_prefix));
     p       += sizeof(tls13_label_prefix);
-    memcpy(p, label, label_len);
+    (void)memcpy(p, label, label_len);
     p       += label_len;
 
     /* Add context value */
