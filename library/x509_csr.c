@@ -461,6 +461,10 @@ int mbedtls_x509_csr_parse(mbedtls_x509_csr *csr, const unsigned char *buf, size
                                           "-----END NEW CERTIFICATE REQUEST-----",
                                           buf, NULL, 0, &use_len);
         }
+        else
+        {
+            ret = MBEDTLS_ERR_ERROR_WRONG_DETECTED
+        }
 
         if (ret == 0) {
             /*
