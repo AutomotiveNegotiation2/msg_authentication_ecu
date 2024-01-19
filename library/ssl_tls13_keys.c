@@ -167,21 +167,18 @@ static void ssl_tls13_hkdf_encode_label_test(
     *p++    = 0;
     *p++    = MBEDTLS_BYTE_0(desired_length);
 
-    /* Add label incl. prefix */
-    *p++    = MBEDTLS_BYTE_0(total_label_len);
+    *p++    = MBEDTLS_BYTE_0(total_label_len);      /* Add label incl. prefix */
     (void)memcpy(p, tls13_label_prefix, sizeof(tls13_label_prefix));
     p       += sizeof(tls13_label_prefix);
     (void)memcpy(p, label, label_len);
     p       += label_len;
 
-    /* Add context value */
-    *p++    = MBEDTLS_BYTE_0(ctx_len);
+    *p++    = MBEDTLS_BYTE_0(ctx_len);              /* Add context value */
     if (ctx_len != 0U) {
         (void)memcpy(p, ctx, ctx_len);
     }
 
-    /* Return total length to the caller.  */
-    *dst_len    = total_hkdf_lbl_len;
+    *dst_len    = total_hkdf_lbl_len;               /* Return total length to the caller.  */
 }
 
 int mbedtls_ssl_tls13_hkdf_expand_label(
