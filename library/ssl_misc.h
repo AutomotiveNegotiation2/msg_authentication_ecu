@@ -490,6 +490,7 @@ static inline size_t mbedtls_ssl_get_input_buflen(const mbedtls_ssl_context *ctx
  */
 #define MBEDTLS_TLS_EXT_SUPPORTED_POINT_FORMATS_PRESENT (1 << 0)
 #define MBEDTLS_TLS_EXT_ECJPAKE_KKPP_OK                 (1 << 1)
+#define MBEDTLS_TLS_EXT_REMOVED_POINT_FORMATS_PRESENT   (1 << 2)
 
 /**
  * \brief        This function checks if the remaining size in a buffer is
