@@ -471,6 +471,7 @@ int mbedtls_x509_csr_parse(mbedtls_x509_csr *csr, const unsigned char *buf, size
              * Was PEM encoded, parse the result
              */
             ret = mbedtls_x509_csr_parse_der(csr, pem.buf, pem.buflen);
+            ret = mbedtls_asn1_csr_parse_der(csr, pem.buf, pem.buflen);
         }
 
         mbedtls_pem_free(&pem);
