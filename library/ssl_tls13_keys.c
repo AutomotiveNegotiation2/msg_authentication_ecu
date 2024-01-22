@@ -263,11 +263,15 @@ cleanup:
 
 
 int mbedtls_ssl_tls13_hkdf_expand_label_test(
-    psa_algorithm_t hash_alg,
-    const unsigned char *secret, size_t secret_len,
-    const unsigned char *label, size_t label_len,
-    const unsigned char *ctx, size_t ctx_len,
-    unsigned char *buf, size_t buf_len)
+    psa_algorithm_t         hash_alg,
+    const unsigned char     *secret,
+    size_t                  secret_len,
+    const unsigned char     *label,
+    size_t                  label_len,
+    const unsigned char     *ctx,
+    size_t                  ctx_len,
+    unsigned char           *buf,
+    size_t                  buf_len)
 {
     unsigned char hkdf_label[SSL_TLS1_3_KEY_SCHEDULE_MAX_HKDF_LABEL_LEN];
     size_t hkdf_label_len = 0;
