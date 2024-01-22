@@ -261,6 +261,86 @@ cleanup:
     return PSA_TO_MBEDTLS_ERR(status);
 }
 
+
+int mbedtls_ssl_tls13_hkdf_expand_label_test(
+    psa_algorithm_t hash_alg,
+    const unsigned char *secret, size_t secret_len,
+    const unsigned char *label, size_t label_len,
+    const unsigned char *ctx, size_t ctx_len,
+    unsigned char *buf, size_t buf_len)
+{
+    unsigned char hkdf_label[SSL_TLS1_3_KEY_SCHEDULE_MAX_HKDF_LABEL_LEN];
+    size_t hkdf_label_len = 0;
+    psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_status_t abort_status = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_key_derivation_operation_t operation =
+        PSA_KEY_DERIVATION_OPERATION_INIT;
+
+    if (label_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_LABEL_LEN) {
+        /* Should never happen since this is an internal
+         * function, and we know statically which labels
+         * are allowed. */
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
+    }
+
+    if (ctx_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_CONTEXT_LEN) {
+        /* Should not happen, as above. */
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
+    }
+
+    if (buf_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN) {
+        /* Should not happen, as above. */
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;
+    }
+
+    if (!PSA_ALG_IS_HASH(hash_alg)) {
+        return MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
+    }
+
+    ssl_tls13_hkdf_encode_label(buf_len,
+                                label, label_len,
+                                ctx, ctx_len,
+                                hkdf_label,
+                                &hkdf_label_len);
+
+    status = psa_key_derivation_setup(&operation, PSA_ALG_HKDF_EXPAND(hash_alg));
+
+    if (status != PSA_SUCCESS) {
+        goto cleanup;
+    }
+
+    status = psa_key_derivation_input_bytes(&operation,
+                                            PSA_KEY_DERIVATION_INPUT_SECRET,
+                                            secret,
+                                            secret_len);
+
+    if (status != PSA_SUCCESS) {
+        goto cleanup;
+    }
+
+    status = psa_key_derivation_input_bytes(&operation,
+                                            PSA_KEY_DERIVATION_INPUT_INFO,
+                                            hkdf_label,
+                                            hkdf_label_len);
+
+    if (status != PSA_SUCCESS) {
+        goto cleanup;
+    }
+
+    status = psa_key_derivation_output_bytes(&operation,
+                                             buf,
+                                             buf_len);
+
+    if (status != PSA_SUCCESS) {
+        goto cleanup;
+    }
+
+cleanup:
+    abort_status = psa_key_derivation_abort(&operation);
+    status = (status == PSA_SUCCESS ? abort_status : status);
+    mbedtls_platform_zeroize(hkdf_label, hkdf_label_len);
+    return PSA_TO_MBEDTLS_ERR(status);
+}
 MBEDTLS_CHECK_RETURN_CRITICAL
 static int ssl_tls13_make_traffic_key(
     psa_algorithm_t hash_alg,
