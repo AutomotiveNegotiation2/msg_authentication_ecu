@@ -273,12 +273,11 @@ int mbedtls_ssl_tls13_hkdf_expand_label_test(
     unsigned char           *buf,
     size_t                  buf_len)
 {
-    unsigned char hkdf_label[SSL_TLS1_3_KEY_SCHEDULE_MAX_HKDF_LABEL_LEN];
-    size_t hkdf_label_len = 0;
-    psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-    psa_status_t abort_status = PSA_ERROR_CORRUPTION_DETECTED;
-    psa_key_derivation_operation_t operation =
-        PSA_KEY_DERIVATION_OPERATION_INIT;
+    unsigned char                   hkdf_label[SSL_TLS1_3_KEY_SCHEDULE_MAX_HKDF_LABEL_LEN];
+    size_t                          hkdf_label_len  = 0;
+    psa_status_t                    status          = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_status_t                    abort_status    = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_key_derivation_operation_t  operation       = PSA_KEY_DERIVATION_OPERATION_INIT;
 
     if (label_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_LABEL_LEN) {
         /* Should never happen since this is an internal
