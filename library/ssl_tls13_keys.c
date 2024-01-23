@@ -261,7 +261,6 @@ cleanup:
     return PSA_TO_MBEDTLS_ERR(status);
 }
 
-
 int mbedtls_ssl_tls13_hkdf_expand_label_test(
     psa_algorithm_t         hash_alg,
     const unsigned char     *secret,
@@ -274,7 +273,7 @@ int mbedtls_ssl_tls13_hkdf_expand_label_test(
     size_t                  buf_len)
 {
     unsigned char                   hkdf_label[SSL_TLS1_3_KEY_SCHEDULE_MAX_HKDF_LABEL_LEN];
-    size_t                          hkdf_label_len  = 0;
+    size_t                          hkdf_label_len  = 0U;
     psa_status_t                    status          = PSA_ERROR_CORRUPTION_DETECTED;
     psa_status_t                    abort_status    = PSA_ERROR_CORRUPTION_DETECTED;
     psa_key_derivation_operation_t  operation       = PSA_KEY_DERIVATION_OPERATION_INIT;
@@ -344,6 +343,7 @@ cleanup:
     mbedtls_platform_zeroize(hkdf_label, hkdf_label_len);
     return PSA_TO_MBEDTLS_ERR(status);
 }
+
 MBEDTLS_CHECK_RETURN_CRITICAL
 static int ssl_tls13_make_traffic_key(
     psa_algorithm_t hash_alg,
