@@ -960,7 +960,7 @@ struct mbedtls_ssl_handshake_params {
         struct {
             uint8_t preparation_done;
             uint8_t operation_done;
-            
+
             /* Buffer holding digest of the handshake up to
              * but excluding the outgoing finished message. */
             unsigned char digest[MBEDTLS_TLS1_3_MD_MAX_SIZE];
@@ -1117,6 +1117,7 @@ struct mbedtls_ssl_transform {
      * Session specific crypto layer
      */
     size_t minlen;                      /*!<  min. ciphertext length  */
+    size_t maxlen;                      /*!<  max. ciphertext length  */
     size_t ivlen;                       /*!<  IV length               */
     size_t fixed_ivlen;                 /*!<  Fixed part of IV (AEAD) */
     size_t maclen;                      /*!<  MAC(CBC) len            */
