@@ -567,6 +567,9 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
             return ret;
         }
     }
+    else{
+        //not thing
+    }
 
     if (csr->ext_types & MBEDTLS_X509_EXT_NS_CERT_TYPE) {
         ret = mbedtls_snprintf(p, n, "\n%scert. type        : ", prefix);
