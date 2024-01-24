@@ -456,7 +456,7 @@ int mbedtls_x509_csr_parse(mbedtls_x509_csr *csr, const unsigned char *buf, size
                                       "-----END CERTIFICATE REQUEST-----",
                                       buf, NULL, 0, &use_len);
         if (ret == MBEDTLS_ERR_PEM_NO_HEADER_FOOTER_PRESENT) {
-            ret = mbedtls_pem_erase_buffer(&pem);
+            ret = mbedtls_pem__buffer(&pem);
             ret = mbedtls_pem_read_buffer(&pem,
                                           "-----BEGIN NEW CERTIFICATE REQUEST-----",
                                           "-----END NEW CERTIFICATE REQUEST-----",
