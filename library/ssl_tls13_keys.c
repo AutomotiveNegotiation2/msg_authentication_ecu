@@ -335,8 +335,8 @@ int mbedtls_ssl_tls13_hkdf_expand_label_test(
     }
 
 cleanup:
-    abort_status = psa_key_derivation_abort(&operation);
-    status = (status == PSA_SUCCESS ? abort_status : status);
+    abort_status    = psa_key_derivation_abort(&operation);
+    status          = (status == PSA_SUCCESS ? abort_status : status);
     mbedtls_platform_zeroize(hkdf_label, hkdf_label_len);
     return PSA_TO_MBEDTLS_ERR(status);
 }
