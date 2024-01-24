@@ -489,7 +489,7 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
 
     NR = ctx->nr;
     RK = ctx->rk;
-
+#if 0
     X[0] = MBEDTLS_GET_UINT32_BE(input,  0);
     X[1] = MBEDTLS_GET_UINT32_BE(input,  4);
     X[2] = MBEDTLS_GET_UINT32_BE(input,  8);
@@ -499,7 +499,26 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
     X[1] ^= *RK++;
     X[2] ^= *RK++;
     X[3] ^= *RK++;
+#else
+    X[0] = MBEDTLS_GET_UINT32_BE(input,  0);
+    X[1] = MBEDTLS_GET_UINT32_BE(input,  4);
+    X[2] = MBEDTLS_GET_UINT32_BE(input,  8);
+    X[3] = MBEDTLS_GET_UINT32_BE(input, 12);
+    X[0] = MBEDTLS_GET_UINT32_BE(input,  16);
+    X[1] = MBEDTLS_GET_UINT32_BE(input,  20);
+    X[2] = MBEDTLS_GET_UINT32_BE(input,  24);
+    X[3] = MBEDTLS_GET_UINT32_BE(input, 28);
 
+    X[0] ^= *RK++;
+    X[1] ^= *RK++;
+    X[2] ^= *RK++;
+    X[3] ^= *RK++;
+    X[4] ^= *RK++;
+    X[5] ^= *RK++;
+    X[6] ^= *RK++;
+    X[7] ^= *RK++;
+
+#endif
     while (NR) {
         --NR;
 #if 0
