@@ -1232,6 +1232,7 @@ typedef struct {
     size_t buf_len;         /* Buffer length                                 */
     size_t data_offset;     /* Offset of record content                      */
     size_t data_len;        /* Length of record content                      */
+    size_t data_max_len;
 
 #if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
     uint8_t cid_len;        /* Length of the CID (0 if not present)          */
