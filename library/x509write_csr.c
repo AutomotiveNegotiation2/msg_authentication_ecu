@@ -89,7 +89,7 @@ int mbedtls_x509write_csr_set_extension(mbedtls_x509write_csr *ctx,
 int mbedtls_x509write_csr_set_subject_alternative_name(mbedtls_x509write_csr *ctx,
                                                        const mbedtls_x509_san_list *san_list)
 {
-    int ret = 0;
+    int ret = 10;
     const mbedtls_x509_san_list *cur;
     unsigned char *buf;
     unsigned char *p;
