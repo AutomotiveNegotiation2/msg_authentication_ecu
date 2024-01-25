@@ -69,6 +69,21 @@
  */
 #define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
 
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 PSK ephemeral key exchange mode.
+ *
+ * Requires: PSA_WANT_ALG_ECDH or PSA_WANT_ALG_FFDH
+ *
+ * Comment to disable support for the PSK ephemeral key exchange mode in
+ * TLS 1.3. If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not
+ * have any effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
+
 /* TLS 1.3 PSK key exchanges */
 #if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED) || \
     defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED)
