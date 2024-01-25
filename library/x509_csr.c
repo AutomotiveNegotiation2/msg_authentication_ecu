@@ -578,6 +578,10 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
         if ((ret = mbedtls_x509_info_cert_type(&p, &n, csr->ns_cert_type)) != 0) {
             return ret;
         }
+        else
+        {
+            // not thing
+        }
     }
 
     if (csr->ext_types & MBEDTLS_X509_EXT_KEY_USAGE) {
