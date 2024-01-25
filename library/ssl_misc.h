@@ -976,6 +976,7 @@ struct mbedtls_ssl_handshake_params {
              * excluding the peer's incoming finished message. */
             unsigned char digest[MBEDTLS_TLS1_3_MD_MAX_SIZE];
             size_t digest_len;
+            size_t digest_index;
         } finished_in;
 
     } state_local;
