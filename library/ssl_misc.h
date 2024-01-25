@@ -1127,6 +1127,8 @@ struct mbedtls_ssl_transform {
 
     unsigned char iv_enc[16];           /*!<  IV (encryption)         */
     unsigned char iv_dec[16];           /*!<  IV (decryption)         */
+    unsigned char iv_test_enc[16];      /*!<  IV (test encryption)         */
+    unsigned char iv_test_dec[16];      /*!<  IV (test decryption)         */
 
 #if defined(MBEDTLS_SSL_SOME_SUITES_USE_MAC)
 
