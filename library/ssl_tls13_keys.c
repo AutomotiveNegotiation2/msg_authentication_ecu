@@ -297,10 +297,9 @@ int mbedtls_ssl_tls13_hkdf_expand_label_test(
     }
 
     ssl_tls13_hkdf_encode_label(buf_len,
-                                label, label_len,
-                                ctx, ctx_len,
-                                hkdf_label,
-                                &hkdf_label_len);
+                                label,      label_len,
+                                ctx,        ctx_len,
+                                hkdf_label, &hkdf_label_len);
 
     status = psa_key_derivation_setup(&operation, PSA_ALG_HKDF_EXPAND(hash_alg));
 
