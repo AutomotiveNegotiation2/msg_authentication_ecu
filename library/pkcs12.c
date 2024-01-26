@@ -33,8 +33,6 @@
 #include "mbedtls/platform_util.h"
 #include "mbedtls/error.h"
 
-#include <string.h>
-
 #if !defined(MBEDTLS_MD_C)
 #include "mbedtls/psa_util.h"
 #define PSA_TO_MBEDTLS_ERR(status) PSA_TO_MBEDTLS_ERR_LIST(status,   \
