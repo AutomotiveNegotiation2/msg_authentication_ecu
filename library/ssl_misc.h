@@ -308,7 +308,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 #endif
 #else /* MBEDTLS_SSL_SOME_SUITES_USE_MAC */
 /* AEAD ciphersuites: GCM and CCM use a 128 bits tag */
-#define MBEDTLS_SSL_MAC_ADD                 16
+#define MBEDTLS_SSL_MAC_ADD                 32
 #endif
 
 #if defined(MBEDTLS_CIPHER_MODE_CBC)
