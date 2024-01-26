@@ -341,7 +341,7 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
     /*
      *  subject               Name
      */
-    csr->subject_raw.p = p;
+    // csr->subject_raw.p = p;
 
     if ((ret = mbedtls_asn1_get_tag(&p, end, &len,
                                     MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {
