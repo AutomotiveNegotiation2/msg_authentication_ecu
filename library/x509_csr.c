@@ -330,11 +330,7 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
         mbedtls_x509_csr_free(csr);
         return ret;
     }
-    else 
-    {
-        //not thing
-    }
-
+    
     if (csr->version != 0) {
         mbedtls_x509_csr_free(csr);
         return MBEDTLS_ERR_X509_UNKNOWN_VERSION;
