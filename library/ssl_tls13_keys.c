@@ -375,10 +375,10 @@ static int ssl_tls13_make_traffic_key(
 
 MBEDTLS_CHECK_RETURN_CRITICAL
 static int ssl_tls13_make_traffic_key_test(
-    psa_algorithm_t hash_alg,
-    const unsigned char *secret, size_t secret_len,
-    unsigned char *key, size_t key_len,
-    unsigned char *iv, size_t iv_len)
+    psa_algorithm_t         hash_alg,
+    const unsigned char     *secret,    size_t      secret_len,
+    unsigned char           *key,       size_t      key_len,
+    unsigned char           *iv,        size_t      iv_len)
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
