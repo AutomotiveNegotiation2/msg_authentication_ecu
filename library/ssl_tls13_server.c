@@ -190,6 +190,17 @@
  */
 //#define MBEDTLS_USE_PSA_CRYPTO
 
+/**
+ * \def MBEDTLS_SSL_SERVER_NAME_INDICATION
+ *
+ * Enable support for RFC 6066 server name indication (SNI) in SSL.
+ *
+ * Requires: MBEDTLS_X509_CRT_PARSE_C
+ *
+ * Comment this macro to disable support for server name indication in SSL
+ */
+#define MBEDTLS_SSL_SERVER_NAME_INDICATION
+
 #if defined(MBEDTLS_SSL_SRV_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include "mbedtls/debug.h"
