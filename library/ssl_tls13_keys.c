@@ -373,6 +373,34 @@ static int ssl_tls13_make_traffic_key(
     return ret;
 }
 
+MBEDTLS_CHECK_RETURN_CRITICAL
+static int ssl_tls13_make_traffic_key_test(
+    psa_algorithm_t hash_alg,
+    const unsigned char *secret, size_t secret_len,
+    unsigned char *key, size_t key_len,
+    unsigned char *iv, size_t iv_len)
+{
+    int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+
+    ret = mbedtls_ssl_tls13_hkdf_expand_label(
+        hash_alg,
+        secret, secret_len,
+        MBEDTLS_SSL_TLS1_3_LBL_WITH_LEN(key),
+        NULL, 0,
+        key, key_len);
+    if (ret != 0) {
+        return ret;
+    }
+
+    ret = mbedtls_ssl_tls13_hkdf_expand_label(
+        hash_alg,
+        secret, secret_len,
+        MBEDTLS_SSL_TLS1_3_LBL_WITH_LEN(iv),
+        NULL, 0,
+        iv, iv_len);
+    return ret;
+}
+
 /*
  * The traffic keying material is generated from the following inputs:
  *
