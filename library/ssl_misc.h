@@ -402,6 +402,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
    long, we're internally using 8 bytes to store the
    implicit sequence number. */
 #define MBEDTLS_SSL_HEADER_LEN 13
+#define MBEDTLS_SSL_HEADER_TEST_LEN 26
 
 #if !defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
 #define MBEDTLS_SSL_IN_BUFFER_LEN  \
