@@ -380,7 +380,7 @@ static int ssl_tls13_make_traffic_key_test(
     unsigned char           *key,       size_t      key_len,
     unsigned char           *iv,        size_t      iv_len)
 {
-    int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+    int     ret     = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
 
     ret = mbedtls_ssl_tls13_hkdf_expand_label(
         hash_alg,
