@@ -961,6 +961,7 @@ struct mbedtls_ssl_handshake_params {
         struct {
             uint8_t preparation_done;
             uint8_t operation_done;
+            uint8_t verification_done;
 
             /* Buffer holding digest of the handshake up to
              * but excluding the outgoing finished message. */
