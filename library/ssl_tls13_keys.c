@@ -279,20 +279,24 @@ int mbedtls_ssl_tls13_hkdf_expand_label_test(
     psa_key_derivation_operation_t  operation       = PSA_KEY_DERIVATION_OPERATION_INIT;
 
     if (label_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_LABEL_LEN) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "label_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_LABEL_LEN");
         return MBEDTLS_ERR_SSL_INTERNAL_ERROR;      /* Should never happen since this is an internal
                                                      * function, and we know statically which labels
                                                      * are allowed. */
     }
 
     if (ctx_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_CONTEXT_LEN) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "ctx_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_CONTEXT_LEN");
         return MBEDTLS_ERR_SSL_INTERNAL_ERROR;      /* Should not happen, as above. */
     }
 
     if (buf_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "buf_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN");
         return MBEDTLS_ERR_SSL_INTERNAL_ERROR;      /* Should not happen, as above. */
     }
 
     if (!PSA_ALG_IS_HASH(hash_alg)) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "PSA_ALG_IS_HASH(hash_alg");
         return MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
     }
 
@@ -304,6 +308,7 @@ int mbedtls_ssl_tls13_hkdf_expand_label_test(
     status = psa_key_derivation_setup(&operation, PSA_ALG_HKDF_EXPAND(hash_alg));
 
     if (status != PSA_SUCCESS) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "status != PSA_SUCCESS");
         goto cleanup;
     }
 
