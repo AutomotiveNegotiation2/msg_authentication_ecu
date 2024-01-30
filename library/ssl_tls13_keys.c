@@ -388,6 +388,7 @@ static int ssl_tls13_make_traffic_key_test(
             MBEDTLS_SSL_TLS1_3_LBL_WITH_LEN(key),
             NULL,       0,
             key,        key_len);
+
     if (ret != 0) {
         return ret;
     }
@@ -398,6 +399,7 @@ static int ssl_tls13_make_traffic_key_test(
             MBEDTLS_SSL_TLS1_3_LBL_WITH_LEN(iv),
             NULL,       0,
             iv,         iv_len);
+
     return ret;
 }
 
