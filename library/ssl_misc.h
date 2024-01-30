@@ -987,7 +987,7 @@ struct mbedtls_ssl_handshake_params {
 
     /* End of state-local variables. */
 
-    unsigned char randbytes[MBEDTLS_HELLO_RANDOM_LEN];
+    unsigned char randbytes[MBEDTLS_TEST_HELLO_RANDOM_LEN];
     /*!<  random bytes            */
 #if defined(MBEDTLS_SSL_PROTO_TLS1_2)
     unsigned char premaster[MBEDTLS_PREMASTER_SIZE];
