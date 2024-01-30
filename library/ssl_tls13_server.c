@@ -215,6 +215,15 @@
  */
 //#define MBEDTLS_SSL_RECORD_SIZE_LIMIT
 
+/**
+ * \def MBEDTLS_SSL_ALPN
+ *
+ * Enable support for RFC 7301 Application Layer Protocol Negotiation.
+ *
+ * Comment this macro to disable support for ALPN.
+ */
+#define MBEDTLS_SSL_ALPN
+
 #if defined(MBEDTLS_SSL_SRV_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include "mbedtls/debug.h"
