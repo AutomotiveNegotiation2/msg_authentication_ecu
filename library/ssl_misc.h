@@ -58,6 +58,8 @@
 #include "mbedtls/pk.h"
 #include "common.h"
 
+#define MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED
+
 /* Shorthand for restartable ECC */
 #if defined(MBEDTLS_ECP_RESTARTABLE) && \
     defined(MBEDTLS_SSL_CLI_C) && \
