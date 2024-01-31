@@ -609,12 +609,14 @@ typedef int  mbedtls_ssl_tls_prf_cb(const unsigned char *secret, size_t slen,
  * we content ourselves with replicating those overapproximations
  * for the maximum block and IV length, and excluding XTS from the
  * computation of the maximum key length. */
-#define MBEDTLS_SSL_MIN_BLOCK_LENGTH 2
-#define MBEDTLS_SSL_MAX_BLOCK_LENGTH 16
-#define MBEDTLS_SSL_MIN_IV_LENGTH    2
-#define MBEDTLS_SSL_MAX_IV_LENGTH    16
-#define MBEDTLS_SSL_MIN_KEY_LENGTH   2
-#define MBEDTLS_SSL_MAX_KEY_LENGTH   32
+#define MBEDTLS_SSL_MIN_BLOCK_LENGTH    2
+#define MBEDTLS_SSL_MAX_BLOCK_LENGTH    16
+#define MBEDTLS_SSL_MIN_IV_LENGTH       2
+#define MBEDTLS_SSL_MAX_IV_LENGTH       16
+#define MBEDTLS_SSL_MIN_KEY_LENGTH      2
+#define MBEDTLS_SSL_MAX_KEY_LENGTH      32
+#define MBEDTLS_SSL_MIN_SEED_LENGTH     32
+#define MBEDTLS_SSL_MAX_SEED_LENGTH     64
 
 /**
  * \brief   The data structure holding the cryptographic material (key and IV)
