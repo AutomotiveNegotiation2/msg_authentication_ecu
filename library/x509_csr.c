@@ -238,9 +238,6 @@ static int x509_csr_parse_attributes(mbedtls_x509_csr *csr,
                                          MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
             }
         }
-        else{
-            break;
-        }
 
         *p = end_attr_data;
     }
