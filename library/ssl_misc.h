@@ -257,6 +257,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 #define MBEDTLS_SSL_RETRANS_SENDING         1U
 #define MBEDTLS_SSL_RETRANS_WAITING         2U
 #define MBEDTLS_SSL_RETRANS_FINISHED        3U
+#define MBEDTLS_SSL_RETRANS_RECEIVING       4U
 
 /*
  * Allow extra bytes for record, authentication and encryption overhead:
