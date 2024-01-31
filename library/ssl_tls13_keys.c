@@ -450,6 +450,37 @@ int mbedtls_ssl_tls13_make_traffic_keys(
     return 0;
 }
 
+int mbedtls_ssl_tls13_make_traffic_keys_test(
+    psa_algorithm_t hash_alg,
+    const unsigned char *client_secret,
+    const unsigned char *server_secret, size_t secret_len,
+    size_t key_len, size_t iv_len,
+    mbedtls_ssl_key_set *keys)
+{
+    int ret = 0;
+
+    ret = ssl_tls13_make_traffic_key(
+        hash_alg, client_secret, secret_len,
+        keys->client_write_key, key_len,
+        keys->client_write_iv, iv_len);
+    if (ret != 0) {
+        return ret;
+    }
+
+    ret = ssl_tls13_make_traffic_key(
+        hash_alg, server_secret, secret_len,
+        keys->server_write_key, key_len,
+        keys->server_write_iv, iv_len);
+    if (ret != 0) {
+        return ret;
+    }
+
+    keys->key_len = key_len;
+    keys->iv_len = iv_len;
+
+    return 0;
+}
+
 int mbedtls_ssl_tls13_derive_secret(
     psa_algorithm_t hash_alg,
     const unsigned char *secret, size_t secret_len,
