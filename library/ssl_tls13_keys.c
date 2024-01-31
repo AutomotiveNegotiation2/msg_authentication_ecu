@@ -451,11 +451,11 @@ int mbedtls_ssl_tls13_make_traffic_keys(
 }
 
 int mbedtls_ssl_tls13_make_traffic_keys_test(
-    psa_algorithm_t hash_alg,
-    const unsigned char *client_secret,
-    const unsigned char *server_secret, size_t secret_len,
-    size_t key_len, size_t iv_len,
-    mbedtls_ssl_key_set *keys)
+    psa_algorithm_t         hash_alg,
+    const unsigned char     *client_secret,
+    const unsigned char     *server_secret,     size_t      secret_len,
+    size_t                  key_len,            size_t      iv_len,
+    mbedtls_ssl_key_set     *keys)
 {
     int ret = 0;
 
