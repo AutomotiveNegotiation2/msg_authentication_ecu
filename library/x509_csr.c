@@ -246,6 +246,10 @@ static int x509_csr_parse_attributes(mbedtls_x509_csr *csr,
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS,
                                  MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
     }
+    else 
+    {
+        return;
+    }
 
     return 0;
 }
