@@ -457,7 +457,7 @@ int mbedtls_ssl_tls13_make_traffic_keys_test(
     size_t                  key_len,            size_t      iv_len,
     mbedtls_ssl_key_set     *keys)
 {
-    int ret = 0;
+    int     ret     = 0;
 
     ret = ssl_tls13_make_traffic_key(
         hash_alg, client_secret, secret_len,
