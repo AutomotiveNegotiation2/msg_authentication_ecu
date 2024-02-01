@@ -460,17 +460,17 @@ int mbedtls_ssl_tls13_make_traffic_keys_test(
     int     ret     = 0;
 
     ret = ssl_tls13_make_traffic_key(
-        hash_alg, client_secret, secret_len,
+        hash_alg,               client_secret,  secret_len,
         keys->client_write_key, key_len,
-        keys->client_write_iv, iv_len);
+        keys->client_write_iv,  iv_len);
     if (ret != 0) {
         return ret;
     }
 
     ret = ssl_tls13_make_traffic_key(
-        hash_alg, server_secret, secret_len,
+        hash_alg,               server_secret,  secret_len,
         keys->server_write_key, key_len,
-        keys->server_write_iv, iv_len);
+        keys->server_write_iv,  iv_len);
     if (ret != 0) {
         return ret;
     }
