@@ -538,6 +538,12 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
         RK += 2;
         camellia_feistel(X + 2, RK, X);
         RK += 2;
+        camellia_feistel(X + 2, RK, X);
+        RK += 2;
+        camellia_feistel(X, RK, X + 2);
+        RK += 2;
+        camellia_feistel(X + 2, RK, X);
+        RK += 2;
 		*/
 #else
         camellia_feistel(X, RK, X + 1);
