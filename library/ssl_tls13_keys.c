@@ -465,6 +465,7 @@ int mbedtls_ssl_tls13_make_traffic_keys_test(
         keys->client_write_iv,  iv_len);
 
     if (ret != 0) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "ssl_tls13_make_traffic_key() returned err code");
         return ret;
     }
 
@@ -474,6 +475,7 @@ int mbedtls_ssl_tls13_make_traffic_keys_test(
         keys->server_write_iv,  iv_len);
 
     if (ret != 0) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "ssl_tls13_make_traffic_key() returned err code");
         return ret;
     }
 
