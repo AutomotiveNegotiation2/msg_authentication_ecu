@@ -390,6 +390,7 @@ static int ssl_tls13_make_traffic_key_test(
             key,        key_len);
 
     if (ret != 0) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "bad return code was returned at mbedtls_ssl_tls13_hkdf_expand_label()");
         return ret;
     }
 
