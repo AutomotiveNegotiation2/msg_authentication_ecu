@@ -637,8 +637,10 @@ struct mbedtls_ssl_key_set {
 
     size_t key_len; /*!< The length of client_write_key and
                      *   server_write_key, in Bytes. */
+    size_t key_max_len;
     size_t iv_len;  /*!< The length of client_write_iv and
                      *   server_write_iv, in Bytes. */
+    size_t iv_max_len;
 };
 typedef struct mbedtls_ssl_key_set mbedtls_ssl_key_set;
 
