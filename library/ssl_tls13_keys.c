@@ -479,8 +479,8 @@ int mbedtls_ssl_tls13_make_traffic_keys_test(
         return ret;
     }
 
-    keys->key_len = key_len;
-    keys->iv_len = iv_len;
+    keys->key_len   = key_len;
+    keys->iv_len    = iv_len;
 
     return 0;
 }
