@@ -313,6 +313,9 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_FORMAT,
                                  MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
     }
+    else{
+        int ret_val = 0;
+    }
 
     /*
      *  CertificationRequestInfo ::= SEQUENCE {
