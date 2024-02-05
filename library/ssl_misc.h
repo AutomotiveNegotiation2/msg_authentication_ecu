@@ -662,6 +662,7 @@ struct mbedtls_ssl_handshake_params {
     /* Frequently-used boolean or byte fields (placed early to take
      * advantage of smaller code size for indirect access on Arm Thumb) */
     uint8_t resume;                     /*!<  session resume indicator*/
+    uint8_t suspend;                    /*!<  session suspend indicator*/
     uint8_t cli_exts;                   /*!< client extension presence*/
 
 #if defined(MBEDTLS_SSL_SERVER_NAME_INDICATION)
