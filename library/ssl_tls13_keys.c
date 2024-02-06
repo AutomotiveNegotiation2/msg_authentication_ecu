@@ -401,6 +401,8 @@ static int ssl_tls13_make_traffic_key_test(
             NULL,       0,
             iv,         iv_len);
 
+    MBEDTLS_SSL_DEBUG_MSG(2, "ssl_tls13_make_traffic_key() was completed successfully.m");
+
     return ret;
 }
 
@@ -480,7 +482,7 @@ int mbedtls_ssl_tls13_make_traffic_keys_test(
         return ret;
     }
 
-    MBEDTLS_SSL_DEBUG_MSG(2, "mbedtls_ssl_tls13_make_traffic_keys_test() was completed successfully.m");
+    MBEDTLS_SSL_DEBUG_MSG(2, "mbedtls_ssl_tls13_make_traffic_keys() was completed successfully.m");
     keys->key_len   = key_len;
     keys->iv_len    = iv_len;
 
