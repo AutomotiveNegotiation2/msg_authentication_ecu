@@ -1250,6 +1250,7 @@ typedef struct {
 
     unsigned char *buf;     /* Memory buffer enclosing the record content    */
     size_t buf_len;         /* Buffer length                                 */
+    size_t buf_max_len;     /* Buffer max length                                 */
     size_t data_offset;     /* Offset of record content                      */
     size_t data_len;        /* Length of record content                      */
     size_t data_max_len;
