@@ -480,6 +480,7 @@ int mbedtls_ssl_tls13_make_traffic_keys_test(
         return ret;
     }
 
+    MBEDTLS_SSL_DEBUG_MSG(2, "mbedtls_ssl_tls13_make_traffic_keys_test() was completed successfully.m");
     keys->key_len   = key_len;
     keys->iv_len    = iv_len;
 
