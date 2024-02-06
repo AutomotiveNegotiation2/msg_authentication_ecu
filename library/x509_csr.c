@@ -574,6 +574,9 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
                                                       prefix)) != 0) {
             return ret;
         }
+        else {
+            return 0;
+        }
     }
     else{
         //not thing
