@@ -664,7 +664,7 @@ void mbedtls_x509_csr_free(mbedtls_x509_csr *csr)
         mbedtls_pk_free(&csr->pk);
     }
 
-    mbedtls_platform_zeroize(csr, sizeof(mbedtls_x509_csr));
+    // mbedtls_platform_zeroize(csr, sizeof(mbedtls_x509_csr));
 }
 
 #endif /* MBEDTLS_X509_CSR_PARSE_C */
