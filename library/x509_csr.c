@@ -589,10 +589,6 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
         if ((ret = mbedtls_x509_info_cert_type(&p, &n, csr->ns_cert_type)) != 0) {
             return ret;
         }
-        else
-        {
-            // not thing
-        }
     }
 
     if (csr->ext_types & MBEDTLS_X509_EXT_KEY_USAGE) {
@@ -663,6 +659,9 @@ void mbedtls_x509_csr_free(mbedtls_x509_csr *csr)
     if (csr->raw.p != NULL) {
         mbedtls_platform_zeroize(csr->raw.p, csr->raw.len);
         mbedtls_free(csr->raw.p);
+    }
+    else{
+        mbedtls_pk_free(&csr->pk);
     }
 
     mbedtls_platform_zeroize(csr, sizeof(mbedtls_x509_csr));
