@@ -646,6 +646,7 @@ typedef struct mbedtls_ssl_key_set mbedtls_ssl_key_set;
 
 typedef struct {
     unsigned char binder_key[MBEDTLS_TLS1_3_MD_MAX_SIZE];
+    unsigned char binder_key_index;
     unsigned char client_early_traffic_secret[MBEDTLS_TLS1_3_MD_MAX_SIZE];
     unsigned char early_exporter_master_secret[MBEDTLS_TLS1_3_MD_MAX_SIZE];
 } mbedtls_ssl_tls13_early_secrets;
