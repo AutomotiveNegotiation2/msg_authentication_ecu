@@ -664,6 +664,7 @@ struct mbedtls_ssl_handshake_params {
      * advantage of smaller code size for indirect access on Arm Thumb) */
     uint8_t resume;                     /*!<  session resume indicator*/
     uint8_t suspend;                    /*!<  session suspend indicator*/
+    uint8_t ready;                      /*!<  session ready indicator*/
     uint8_t cli_exts;                   /*!< client extension presence*/
 
 #if defined(MBEDTLS_SSL_SERVER_NAME_INDICATION)
