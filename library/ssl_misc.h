@@ -1730,7 +1730,7 @@ static inline size_t mbedtls_ssl_in_hdr_len(const mbedtls_ssl_context *ssl)
     } else
 #endif /* MBEDTLS_SSL_PROTO_DTLS */
     {
-        return 5;
+        return 6;
     }
 }
 
