@@ -863,6 +863,7 @@ struct mbedtls_ssl_handshake_params {
             unsigned is_timeout    : 1;
             unsigned char *data;
             size_t data_len;
+            size_t data_max_len;
         } hs[MBEDTLS_SSL_MAX_BUFFERED_HS];
 
         struct {
