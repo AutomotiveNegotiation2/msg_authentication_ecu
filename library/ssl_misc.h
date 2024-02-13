@@ -637,9 +637,11 @@ struct mbedtls_ssl_key_set {
     unsigned char test_write_key[MBEDTLS_SSL_MAX_KEY_LENGTH];
     unsigned char test_write_iv[MBEDTLS_SSL_MAX_IV_LENGTH];
 
+    size_t key_min_len;
     size_t key_len; /*!< The length of client_write_key and
                      *   server_write_key, in Bytes. */
     size_t key_max_len;
+    size_t iv_min_len;
     size_t iv_len;  /*!< The length of client_write_iv and
                      *   server_write_iv, in Bytes. */
     size_t iv_max_len;
