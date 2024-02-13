@@ -633,11 +633,6 @@ void mbedtls_x509_csr_init(mbedtls_x509_csr *csr)
     {
          return 1;
     }
-    else
-    {
-        // do nothing 
-
-    }
     
 }
 
