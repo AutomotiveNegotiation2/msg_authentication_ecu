@@ -91,7 +91,7 @@ static int pkcs12_parse_pbe_params(mbedtls_asn1_buf *params,
     return 0;
 }
 
-#define PKCS12_MAX_PWDLEN 128
+#define PKCS12_MAX_PWDLEN 256
 
 static int pkcs12_pbe_derive_key_iv(mbedtls_asn1_buf *pbe_params, mbedtls_md_type_t md_type,
                                     const unsigned char *pwd,  size_t pwdlen,
