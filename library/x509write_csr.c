@@ -107,7 +107,7 @@ int mbedtls_x509write_csr_set_subject_alternative_name(mbedtls_x509write_csr *ct
                  * maximum 4 bytes for the length field,
                  * 1 byte for the tag/type.
                  */
-                buflen += cur->node.san.unstructured_name.len + 4 + 1;
+                buflen += cur->node.san.unstructured_name.len + 5;
                 break;
 
             default:
@@ -117,7 +117,7 @@ int mbedtls_x509write_csr_set_subject_alternative_name(mbedtls_x509write_csr *ct
     }
 
     /* Add the extra length field and tag */
-    buflen += 4 + 1;
+    buflen += 5;
 
     /* Allocate buffer */
     buf = mbedtls_calloc(1, buflen);
