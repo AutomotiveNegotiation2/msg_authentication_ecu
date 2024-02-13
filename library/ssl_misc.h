@@ -73,6 +73,8 @@
 #define MBEDTLS_SSL_RENEGOTIATION_DONE          2   /* Done or aborted */
 #define MBEDTLS_SSL_RENEGOTIATION_PENDING       3   /* Requested (server only) */
 #define MBEDTLS_SSL_READY_HANDSHAKE             4    
+#define MBEDTLS_SSL_TIMEOUT_HANDSHAKE           5
+
 
 /* Faked handshake message identity for HelloRetryRequest. */
 #define MBEDTLS_SSL_TLS1_3_HS_HELLO_RETRY_REQUEST (-MBEDTLS_SSL_HS_SERVER_HELLO)
