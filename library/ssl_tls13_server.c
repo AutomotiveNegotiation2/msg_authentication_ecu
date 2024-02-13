@@ -449,7 +449,7 @@ static int ssl_tls13_offered_psks_check_identity_match_ticket(
      *
      * For time being, the age MUST be less than 604800 seconds (7 days).
      */
-    if (age_in_s > 604800) {
+    if (age_in_s > (uint64_t)604800) {
         MBEDTLS_SSL_DEBUG_MSG(
             3, ("Ticket age exceeds limitation ticket_age=%lu",
                 (long unsigned int) age_in_s));
