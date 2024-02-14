@@ -367,6 +367,8 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 
 #define MBEDTLS_RECEIVED_VERI_ALGS_SIZE        200
 #define MBEDTLS_RECEIVED_SIG_ALGS_SIZE         20
+#define MBEDTLS_SEND_VERI_ALGS_SIZE            200
+#define MBEDTLS_SEND_SIG_ALGS_SIZE             20
 
 
 #if defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED)
