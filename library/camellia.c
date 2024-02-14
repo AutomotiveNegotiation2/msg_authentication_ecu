@@ -452,6 +452,7 @@ int mbedtls_camellia_setkey_dec(mbedtls_camellia_context *ctx,
     RK = ctx->rk;
     SK = cty.rk;
 	
+	//RK & SK operation
     *RK++ = *SK++;
     *RK++ = *SK++;
     *RK++ = *SK++;
