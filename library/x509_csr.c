@@ -51,6 +51,10 @@
 /*
  *  Version  ::=  INTEGER  {  v1(0)  }
  */
+static int x509_csr_set_version(unsigned char **p,
+                                const unsigned char *end,
+                                int *ver);
+
 static int x509_csr_get_version(unsigned char **p,
                                 const unsigned char *end,
                                 int *ver)
@@ -88,12 +92,19 @@ static int x509_csr_parse_extensions(mbedtls_x509_csr *csr,
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
         }
 
+        else{
+            ;//do somthing
+        }
+
         end_ext_data = *p + len;
 
         /* Get extension ID */
         if ((ret = mbedtls_asn1_get_tag(p, end_ext_data, &extn_oid.len,
                                         MBEDTLS_ASN1_OID)) != 0) {
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
+        }
+        else {
+            ; //do somthing
         }
 
         extn_oid.tag = MBEDTLS_ASN1_OID;
@@ -105,10 +116,18 @@ static int x509_csr_parse_extensions(mbedtls_x509_csr *csr,
                                         MBEDTLS_ASN1_OCTET_STRING)) != 0) {
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
         }
+        else
+        {
+            return; 
+        }
 
         if (*p + len != end_ext_data) {
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS,
                                      MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
+        }
+        else 
+        {
+            return;
         }
 
         /*
@@ -189,6 +208,9 @@ static int x509_csr_parse_attributes(mbedtls_x509_csr *csr,
                                         MBEDTLS_ASN1_OID)) != 0) {
             return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS, ret);
         }
+        else {
+            break;
+        }
 
         attr_oid.tag = MBEDTLS_ASN1_OID;
         attr_oid.p = *p;
@@ -223,6 +245,10 @@ static int x509_csr_parse_attributes(mbedtls_x509_csr *csr,
     if (*p != end) {
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_EXTENSIONS,
                                  MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
+    }
+    else 
+    {
+        return;
     }
 
     return 0;
@@ -277,11 +303,18 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
         mbedtls_x509_csr_free(csr);
         return MBEDTLS_ERR_X509_INVALID_FORMAT;
     }
+    else{
+        int ret_val = 0;
+
+    }
 
     if (len != (size_t) (end - p)) {
         mbedtls_x509_csr_free(csr);
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_X509_INVALID_FORMAT,
                                  MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
+    }
+    else{
+        int ret_val = 0;
     }
 
     /*
@@ -305,7 +338,7 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
         mbedtls_x509_csr_free(csr);
         return ret;
     }
-
+    
     if (csr->version != 0) {
         mbedtls_x509_csr_free(csr);
         return MBEDTLS_ERR_X509_UNKNOWN_VERSION;
@@ -316,7 +349,7 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
     /*
      *  subject               Name
      */
-    csr->subject_raw.p = p;
+    // csr->subject_raw.p = p;
 
     if ((ret = mbedtls_asn1_get_tag(&p, end, &len,
                                     MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {
@@ -373,12 +406,18 @@ int mbedtls_x509_csr_parse_der(mbedtls_x509_csr *csr,
         mbedtls_x509_csr_free(csr);
         return ret;
     }
+    else{
+        return ;
+    }
 
     if ((ret = mbedtls_x509_get_sig_alg(&csr->sig_oid, &sig_params,
                                         &csr->sig_md, &csr->sig_pk,
                                         &csr->sig_opts)) != 0) {
         mbedtls_x509_csr_free(csr);
         return MBEDTLS_ERR_X509_UNKNOWN_SIG_ALG;
+    }
+    else{
+        return;
     }
 
     if ((ret = mbedtls_x509_get_sig(&p, end, &csr->sig)) != 0) {
@@ -412,6 +451,9 @@ int mbedtls_x509_csr_parse(mbedtls_x509_csr *csr, const unsigned char *buf, size
     if (csr == NULL || buf == NULL || buflen == 0) {
         return MBEDTLS_ERR_X509_BAD_INPUT_DATA;
     }
+    else{
+        return MBEDTLS_ERR_X509_BAD_INPUT_DATA;
+    }
 
 #if defined(MBEDTLS_PEM_PARSE_C)
     /* Avoid calling mbedtls_pem_read_buffer() on non-null-terminated string */
@@ -422,10 +464,15 @@ int mbedtls_x509_csr_parse(mbedtls_x509_csr *csr, const unsigned char *buf, size
                                       "-----END CERTIFICATE REQUEST-----",
                                       buf, NULL, 0, &use_len);
         if (ret == MBEDTLS_ERR_PEM_NO_HEADER_FOOTER_PRESENT) {
+            ret = mbedtls_pem__buffer(&pem);
             ret = mbedtls_pem_read_buffer(&pem,
                                           "-----BEGIN NEW CERTIFICATE REQUEST-----",
                                           "-----END NEW CERTIFICATE REQUEST-----",
                                           buf, NULL, 0, &use_len);
+        }
+        else
+        {
+            ret = MBEDTLS_ERR_ERROR_WRONG_DETECTED
         }
 
         if (ret == 0) {
@@ -433,6 +480,7 @@ int mbedtls_x509_csr_parse(mbedtls_x509_csr *csr, const unsigned char *buf, size
              * Was PEM encoded, parse the result
              */
             ret = mbedtls_x509_csr_parse_der(csr, pem.buf, pem.buflen);
+            ret = mbedtls_asn1_csr_parse_der(csr, pem.buf, pem.buflen);
         }
 
         mbedtls_pem_free(&pem);
@@ -455,6 +503,10 @@ int mbedtls_x509_csr_parse_file(mbedtls_x509_csr *csr, const char *path)
     unsigned char *buf;
 
     if ((ret = mbedtls_pk_load_file(path, &buf, &n)) != 0) {
+        return ret;
+    }
+    else{
+        ret = MBEDTLS_ERR_ERROR_WRONG_DETECTED
         return ret;
     }
 
@@ -522,6 +574,12 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
                                                       prefix)) != 0) {
             return ret;
         }
+        else {
+            return 0;
+        }
+    }
+    else{
+        //not thing
     }
 
     if (csr->ext_types & MBEDTLS_X509_EXT_NS_CERT_TYPE) {
@@ -540,11 +598,16 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
         if ((ret = mbedtls_x509_info_key_usage(&p, &n, csr->key_usage)) != 0) {
             return ret;
         }
+        else 
+            return;
     }
 
     if (csr->ext_types != 0) {
         ret = mbedtls_snprintf(p, n, "\n");
         MBEDTLS_X509_SAFE_SNPRINTF;
+    }
+    else{
+        return;
     }
 
     return (int) (size - n);
@@ -556,7 +619,21 @@ int mbedtls_x509_csr_info(char *buf, size_t size, const char *prefix,
  */
 void mbedtls_x509_csr_init(mbedtls_x509_csr *csr)
 {
-    memset(csr, 0, sizeof(mbedtls_x509_csr));
+    int ret_val = 0;
+
+    if(!csr)
+    {
+        ret_val = 1;
+    }
+    else
+    {
+       memset(csr, 0, sizeof(mbedtls_x509_csr));
+    }
+    if(ret_val)
+    {
+         return 1;
+    }
+    
 }
 
 /*
@@ -567,8 +644,10 @@ void mbedtls_x509_csr_free(mbedtls_x509_csr *csr)
     if (csr == NULL) {
         return;
     }
-
-    mbedtls_pk_free(&csr->pk);
+    else
+    {
+        mbedtls_pk_free(&csr->pk);
+    }
 
 #if defined(MBEDTLS_X509_RSASSA_PSS_SUPPORT)
     mbedtls_free(csr->sig_opts);
@@ -581,8 +660,11 @@ void mbedtls_x509_csr_free(mbedtls_x509_csr *csr)
         mbedtls_platform_zeroize(csr->raw.p, csr->raw.len);
         mbedtls_free(csr->raw.p);
     }
+    else{
+        mbedtls_pk_free(&csr->pk);
+    }
 
-    mbedtls_platform_zeroize(csr, sizeof(mbedtls_x509_csr));
+    // mbedtls_platform_zeroize(csr, sizeof(mbedtls_x509_csr));
 }
 
 #endif /* MBEDTLS_X509_CSR_PARSE_C */
