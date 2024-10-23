@@ -264,7 +264,7 @@ static void camellia_feistel(const uint32_t x[2], const uint32_t k[2],
     uint32_t I0, I1;
     I0 = x[0] ^ k[0];
     I1 = x[1] ^ k[1];
-
+#if 0
     I0 = ((uint32_t) SBOX1(MBEDTLS_BYTE_3(I0)) << 24) |
          ((uint32_t) SBOX2(MBEDTLS_BYTE_2(I0)) << 16) |
          ((uint32_t) SBOX3(MBEDTLS_BYTE_1(I0)) <<  8) |
@@ -273,7 +273,17 @@ static void camellia_feistel(const uint32_t x[2], const uint32_t k[2],
          ((uint32_t) SBOX3(MBEDTLS_BYTE_2(I1)) << 16) |
          ((uint32_t) SBOX4(MBEDTLS_BYTE_1(I1)) <<  8) |
          ((uint32_t) SBOX1(MBEDTLS_BYTE_0(I1)));
-
+#else
+	//test
+    I1 = ((uint32_t) SBOX1(MBEDTLS_BYTE_3(I0)) << 24) |
+         ((uint32_t) SBOX2(MBEDTLS_BYTE_2(I0)) << 16) |
+         ((uint32_t) SBOX3(MBEDTLS_BYTE_1(I0)) <<  8) |
+         ((uint32_t) SBOX4(MBEDTLS_BYTE_0(I0)));
+    I0 = ((uint32_t) SBOX1(MBEDTLS_BYTE_3(I1)) << 24) |
+         ((uint32_t) SBOX2(MBEDTLS_BYTE_2(I1)) << 16) |
+         ((uint32_t) SBOX3(MBEDTLS_BYTE_1(I1)) <<  8) |
+         ((uint32_t) SBOX4(MBEDTLS_BYTE_0(I1)));
+#endif
     I0 ^= (I1 << 8) | (I1 >> 24);
     I1 ^= (I0 << 16) | (I0 >> 16);
     I0 ^= (I1 >> 8) | (I1 << 24);
@@ -320,7 +330,11 @@ int mbedtls_camellia_setkey_enc(mbedtls_camellia_context *ctx,
     switch (keybits) {
         case 128: ctx->nr = 3; idx = 0; break;
         case 192:
+#if 0
         case 256: ctx->nr = 4; idx = 1; break;
+#else
+		case 256: ctx->nr = 3; idx = 1; break;
+#endif
         default: return MBEDTLS_ERR_CAMELLIA_BAD_INPUT_DATA;
     }
 
@@ -430,10 +444,15 @@ int mbedtls_camellia_setkey_dec(mbedtls_camellia_context *ctx,
 
     ctx->nr = cty.nr;
     idx = (ctx->nr == 4);
-
+/*
     RK = ctx->rk;
     SK = cty.rk + 24 * 2 + 8 * idx * 2;
+*/
 
+    RK = ctx->rk;
+    SK = cty.rk;
+	
+	//RK & SK operation
     *RK++ = *SK++;
     *RK++ = *SK++;
     *RK++ = *SK++;
@@ -475,7 +494,7 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
 
     NR = ctx->nr;
     RK = ctx->rk;
-
+#if 0
     X[0] = MBEDTLS_GET_UINT32_BE(input,  0);
     X[1] = MBEDTLS_GET_UINT32_BE(input,  4);
     X[2] = MBEDTLS_GET_UINT32_BE(input,  8);
@@ -485,9 +504,29 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
     X[1] ^= *RK++;
     X[2] ^= *RK++;
     X[3] ^= *RK++;
+#else
+    X[0] = MBEDTLS_GET_UINT32_BE(input,  0);
+    X[1] = MBEDTLS_GET_UINT32_BE(input,  4);
+    X[2] = MBEDTLS_GET_UINT32_BE(input,  8);
+    X[3] = MBEDTLS_GET_UINT32_BE(input, 12);
+    X[0] = MBEDTLS_GET_UINT32_BE(input,  16);
+    X[1] = MBEDTLS_GET_UINT32_BE(input,  20);
+    X[2] = MBEDTLS_GET_UINT32_BE(input,  24);
+    X[3] = MBEDTLS_GET_UINT32_BE(input, 28);
 
+    X[0] ^= *RK++;
+    X[1] ^= *RK++;
+    X[2] ^= *RK++;
+    X[3] ^= *RK++;
+    X[4] ^= *RK++;
+    X[5] ^= *RK++;
+    X[6] ^= *RK++;
+    X[7] ^= *RK++;
+
+#endif
     while (NR) {
         --NR;
+#if 0
         camellia_feistel(X, RK, X + 2);
         RK += 2;
         camellia_feistel(X + 2, RK, X);
@@ -500,7 +539,27 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
         RK += 2;
         camellia_feistel(X + 2, RK, X);
         RK += 2;
-
+        camellia_feistel(X + 2, RK, X);
+        RK += 2;
+        camellia_feistel(X, RK, X + 2);
+        RK += 2;
+        camellia_feistel(X + 2, RK, X);
+        RK += 2;
+		*/
+#else
+        camellia_feistel(X, RK, X + 1);
+        RK++;
+        camellia_feistel(X + 1, RK, X);
+        RK++;
+        camellia_feistel(X, RK, X + 1);
+        RK++;
+        camellia_feistel(X + 1, RK, X);
+        RK++;
+        camellia_feistel(X, RK, X + 1);
+        RK++;
+        camellia_feistel(X + 1, RK, X);
+        RK++;
+#endif
         if (NR) {
             FL(X[0], X[1], RK[0], RK[1]);
             RK += 2;
@@ -513,12 +572,18 @@ int mbedtls_camellia_crypt_ecb(mbedtls_camellia_context *ctx,
     X[3] ^= *RK++;
     X[0] ^= *RK++;
     X[1] ^= *RK++;
-
+/*
     MBEDTLS_PUT_UINT32_BE(X[2], output,  0);
     MBEDTLS_PUT_UINT32_BE(X[3], output,  4);
     MBEDTLS_PUT_UINT32_BE(X[0], output,  8);
     MBEDTLS_PUT_UINT32_BE(X[1], output, 12);
+*/
 
+    MBEDTLS_PUT_UINT32_BE(X[0], output,  0);
+    MBEDTLS_PUT_UINT32_BE(X[1], output,  4);
+    MBEDTLS_PUT_UINT32_BE(X[2], output,  8);
+    MBEDTLS_PUT_UINT32_BE(X[3], output, 12);
+	
     return 0;
 }
 
