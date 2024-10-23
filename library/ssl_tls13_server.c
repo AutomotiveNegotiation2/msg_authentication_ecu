@@ -19,6 +19,249 @@
 
 #include "common.h"
 
+/**
+ * \def MBEDTLS_SSL_SRV_C
+ *
+ * Enable the SSL/TLS server code.
+ *
+ * Module:  library/ssl*_server.c
+ * Caller:
+ *
+ * Requires: MBEDTLS_SSL_TLS_C
+ *
+ * This module is required for SSL/TLS server support.
+ */
+#define MBEDTLS_SSL_SRV_C
+
+/**
+ * \def MBEDTLS_SSL_PROTO_TLS1_3
+ *
+ * Enable support for TLS 1.3.
+ *
+ * \note See docs/architecture/tls13-support.md for a description of the TLS
+ *       1.3 support that this option enables.
+ *
+ * Requires: MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ *
+ * \note TLS 1.3 uses PSA crypto for cryptographic operations that are
+ *       directly performed by TLS 1.3 code. As a consequence, you must
+ *       call psa_crypto_init() before the first TLS 1.3 handshake.
+ *
+ * \note Cryptographic operations performed indirectly via another module
+ *       (X.509, PK) or by code shared with TLS 1.2 (record protection,
+ *       running handshake hash) only use PSA crypto if
+ *       #MBEDTLS_USE_PSA_CRYPTO is enabled.
+ *
+ * Uncomment this macro to enable the support for TLS 1.3.
+ */
+#define MBEDTLS_SSL_PROTO_TLS1_3
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
+ *
+ * Enable TLS 1.3 PSK key exchange mode.
+ *
+ * Comment to disable support for the PSK key exchange mode in TLS 1.3. If
+ * MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
+
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 PSK ephemeral key exchange mode.
+ *
+ * Requires: PSA_WANT_ALG_ECDH or PSA_WANT_ALG_FFDH
+ *
+ * Comment to disable support for the PSK ephemeral key exchange mode in
+ * TLS 1.3. If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not
+ * have any effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
+
+/* TLS 1.3 PSK key exchanges */
+#if defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED) || \
+    defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED)
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_SOME_PSK_ENABLED
+#endif
+
+/**
+ * \def MBEDTLS_SSL_SESSION_TICKETS
+ *
+ * Enable support for RFC 5077 session tickets in SSL.
+ * Client-side, provides full support for session tickets (maintenance of a
+ * session store remains the responsibility of the application, though).
+ * Server-side, you also need to provide callbacks for writing and parsing
+ * tickets, including authenticated encryption and key management. Example
+ * callbacks are provided by MBEDTLS_SSL_TICKET_C.
+ *
+ * Comment this macro to disable support for SSL session tickets
+ */
+#define MBEDTLS_SSL_SESSION_TICKETS
+
+/**
+ * \def MBEDTLS_HAVE_TIME
+ *
+ * System has time.h and time().
+ * The time does not need to be correct, only time differences are used,
+ * by contrast with MBEDTLS_HAVE_TIME_DATE
+ *
+ * Defining MBEDTLS_HAVE_TIME allows you to specify MBEDTLS_PLATFORM_TIME_ALT,
+ * MBEDTLS_PLATFORM_TIME_MACRO, MBEDTLS_PLATFORM_TIME_TYPE_MACRO and
+ * MBEDTLS_PLATFORM_STD_TIME.
+ *
+ * Comment if your system does not support time functions.
+ *
+ * \note If MBEDTLS_TIMING_C is set - to enable the semi-portable timing
+ *       interface - timing.c will include time.h on suitable platforms
+ *       regardless of the setting of MBEDTLS_HAVE_TIME, unless
+ *       MBEDTLS_TIMING_ALT is used. See timing.c for more information.
+ */
+#define MBEDTLS_HAVE_TIME
+
+/**
+ * \def MBEDTLS_ECDH_C
+ *
+ * Enable the elliptic curve Diffie-Hellman library.
+ *
+ * Module:  library/ecdh.c
+ * Caller:  library/psa_crypto.c
+ *          library/ssl_tls.c
+ *          library/ssl*_client.c
+ *          library/ssl*_server.c
+ *
+ * This module is used by the following key exchanges:
+ *      ECDHE-ECDSA, ECDHE-RSA, DHE-PSK
+ *
+ * Requires: MBEDTLS_ECP_C
+ */
+#define MBEDTLS_ECDH_C
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 ephemeral key exchange mode.
+ *
+ * Requires: PSA_WANT_ALG_ECDH or PSA_WANT_ALG_FFDH
+ *           MBEDTLS_X509_CRT_PARSE_C
+ *           and at least one of:
+ *               MBEDTLS_ECDSA_C or (MBEDTLS_USE_PSA_CRYPTO and PSA_WANT_ALG_ECDSA)
+ *               MBEDTLS_PKCS1_V21
+ *
+ * Comment to disable support for the ephemeral key exchange mode in TLS 1.3.
+ * If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#define MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+
+/**
+ * \def MBEDTLS_USE_PSA_CRYPTO
+ *
+ * Make the X.509 and TLS libraries use PSA for cryptographic operations as
+ * much as possible, and enable new APIs for using keys handled by PSA Crypto.
+ *
+ * \note Development of this option is currently in progress, and parts of Mbed
+ * TLS's X.509 and TLS modules are not ported to PSA yet. However, these parts
+ * will still continue to work as usual, so enabling this option should not
+ * break backwards compatibility.
+ *
+ * \warning If you enable this option, you need to call `psa_crypto_init()`
+ * before calling any function from the SSL/TLS, X.509 or PK modules, except
+ * for the various mbedtls_xxx_init() functions which can be called at any time.
+ *
+ * \note An important and desirable effect of this option is that it allows
+ * PK, X.509 and TLS to take advantage of PSA drivers. For example, enabling
+ * this option is what allows use of drivers for ECDSA, ECDH and EC J-PAKE in
+ * those modules. However, note that even with this option disabled, some code
+ * in PK, X.509, TLS or the crypto library might still use PSA drivers, if it
+ * can determine it's safe to do so; currently that's the case for hashes.
+ *
+ * \note See docs/use-psa-crypto.md for a complete description this option.
+ *
+ * Requires: MBEDTLS_PSA_CRYPTO_C.
+ *
+ * Uncomment this to enable internal use of PSA Crypto and new associated APIs.
+ */
+//#define MBEDTLS_USE_PSA_CRYPTO
+
+/**
+ * \def MBEDTLS_SSL_SERVER_NAME_INDICATION
+ *
+ * Enable support for RFC 6066 server name indication (SNI) in SSL.
+ *
+ * Requires: MBEDTLS_X509_CRT_PARSE_C
+ *
+ * Comment this macro to disable support for server name indication in SSL
+ */
+#define MBEDTLS_SSL_SERVER_NAME_INDICATION
+
+/**
+ * \def MBEDTLS_SSL_RECORD_SIZE_LIMIT
+ *
+ * Enable support for RFC 8449 record_size_limit extension in SSL (TLS 1.3 only).
+ *
+ * \warning This extension is currently in development and must NOT be used except
+ *          for testing purposes.
+ *
+ * Requires: MBEDTLS_SSL_PROTO_TLS1_3
+ *
+ * Uncomment this macro to enable support for the record_size_limit extension
+ */
+//#define MBEDTLS_SSL_RECORD_SIZE_LIMIT
+
+/**
+ * \def MBEDTLS_SSL_ALPN
+ *
+ * Enable support for RFC 7301 Application Layer Protocol Negotiation.
+ *
+ * Comment this macro to disable support for ALPN.
+ */
+#define MBEDTLS_SSL_ALPN
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
+ *
+ * Enable TLS 1.3 middlebox compatibility mode.
+ *
+ * As specified in Section D.4 of RFC 8446, TLS 1.3 offers a compatibility
+ * mode to make a TLS 1.3 connection more likely to pass through middle boxes
+ * expecting TLS 1.2 traffic.
+ *
+ * Turning on the compatibility mode comes at the cost of a few added bytes
+ * on the wire, but it doesn't affect compatibility with TLS 1.3 implementations
+ * that don't use it. Therefore, unless transmission bandwidth is critical and
+ * you know that middlebox compatibility issues won't occur, it is therefore
+ * recommended to set this option.
+ *
+ * Comment to disable compatibility mode for TLS 1.3. If
+ * MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+//#define MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
+
+/**
+ * \def MBEDTLS_X509_CRT_PARSE_C
+ *
+ * Enable X.509 certificate parsing.
+ *
+ * Module:  library/x509_crt.c
+ * Caller:  library/ssl_tls.c
+ *          library/ssl*_client.c
+ *          library/ssl*_server.c
+ *
+ * Requires: MBEDTLS_X509_USE_C
+ *
+ * This module is required for X.509 certificate parsing.
+ */
+#define MBEDTLS_X509_CRT_PARSE_C
+
 #if defined(MBEDTLS_SSL_SRV_C) && defined(MBEDTLS_SSL_PROTO_TLS1_3)
 
 #include "mbedtls/debug.h"
@@ -206,7 +449,7 @@ static int ssl_tls13_offered_psks_check_identity_match_ticket(
      *
      * For time being, the age MUST be less than 604800 seconds (7 days).
      */
-    if (age_in_s > 604800) {
+    if (age_in_s > (uint64_t)604800) {
         MBEDTLS_SSL_DEBUG_MSG(
             3, ("Ticket age exceeds limitation ticket_age=%lu",
                 (long unsigned int) age_in_s));
