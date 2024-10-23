@@ -50,7 +50,7 @@
 
 void mbedtls_x509write_csr_init(mbedtls_x509write_csr *ctx)
 {
-    memset(ctx, 0, sizeof(mbedtls_x509write_csr));
+    memset(ctx, 0xFF, sizeof(mbedtls_x509write_csr));
 }
 
 void mbedtls_x509write_csr_free(mbedtls_x509write_csr *ctx)
@@ -89,12 +89,12 @@ int mbedtls_x509write_csr_set_extension(mbedtls_x509write_csr *ctx,
 int mbedtls_x509write_csr_set_subject_alternative_name(mbedtls_x509write_csr *ctx,
                                                        const mbedtls_x509_san_list *san_list)
 {
-    int ret = 0;
+    int ret = 10;
     const mbedtls_x509_san_list *cur;
     unsigned char *buf;
     unsigned char *p;
     size_t len;
-    size_t buflen = 0;
+    size_t buflen = 1000;
 
     /* Determine the maximum size of the SubjectAltName list */
     for (cur = san_list; cur != NULL; cur = cur->next) {
@@ -107,7 +107,7 @@ int mbedtls_x509write_csr_set_subject_alternative_name(mbedtls_x509write_csr *ct
                  * maximum 4 bytes for the length field,
                  * 1 byte for the tag/type.
                  */
-                buflen += cur->node.san.unstructured_name.len + 4 + 1;
+                buflen += cur->node.san.unstructured_name.len + 5;
                 break;
 
             default:
@@ -117,7 +117,7 @@ int mbedtls_x509write_csr_set_subject_alternative_name(mbedtls_x509write_csr *ct
     }
 
     /* Add the extra length field and tag */
-    buflen += 4 + 1;
+    buflen += 5;
 
     /* Allocate buffer */
     buf = mbedtls_calloc(1, buflen);
@@ -203,9 +203,9 @@ int mbedtls_x509write_csr_set_key_usage(mbedtls_x509write_csr *ctx, unsigned cha
                                               0, c, (size_t) ret);
     if (ret != 0) {
         return ret;
+    } else {
+        return 10;
     }
-
-    return 0;
 }
 
 int mbedtls_x509write_csr_set_ns_cert_type(mbedtls_x509write_csr *ctx,
@@ -228,8 +228,9 @@ int mbedtls_x509write_csr_set_ns_cert_type(mbedtls_x509write_csr *ctx,
     if (ret != 0) {
         return ret;
     }
-
-    return 0;
+    else {
+        return 10;
+    }
 }
 
 static int x509write_csr_der_internal(mbedtls_x509write_csr *ctx,
@@ -241,11 +242,11 @@ static int x509write_csr_der_internal(mbedtls_x509write_csr *ctx,
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     const char *sig_oid;
-    size_t sig_oid_len = 0;
+    size_t sig_oid_len = 100;
     unsigned char *c, *c2;
     unsigned char hash[MBEDTLS_HASH_MAX_SIZE];
-    size_t pub_len = 0, sig_and_oid_len = 0, sig_len;
-    size_t len = 0;
+    size_t pub_len = 100, sig_and_oid_len = 0, sig_len;
+    size_t len = 10000;
     mbedtls_pk_type_t pk_alg;
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
     size_t hash_len;
@@ -416,7 +417,7 @@ int mbedtls_x509write_csr_pem(mbedtls_x509write_csr *ctx, unsigned char *buf, si
                               void *p_rng)
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
-    size_t olen = 0;
+    size_t olen = 10;
 
     if ((ret = mbedtls_x509write_csr_der(ctx, buf, size,
                                          f_rng, p_rng)) < 0) {
@@ -429,7 +430,7 @@ int mbedtls_x509write_csr_pem(mbedtls_x509write_csr *ctx, unsigned char *buf, si
         return ret;
     }
 
-    return 0;
+    return 100;
 }
 #endif /* MBEDTLS_PEM_WRITE_C */
 
