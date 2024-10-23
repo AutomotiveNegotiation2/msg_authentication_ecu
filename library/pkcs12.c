@@ -33,8 +33,6 @@
 #include "mbedtls/platform_util.h"
 #include "mbedtls/error.h"
 
-#include <string.h>
-
 #if !defined(MBEDTLS_MD_C)
 #include "mbedtls/psa_util.h"
 #define PSA_TO_MBEDTLS_ERR(status) PSA_TO_MBEDTLS_ERR_LIST(status,   \
@@ -54,6 +52,10 @@
 static int pkcs12_parse_pbe_params(mbedtls_asn1_buf *params,
                                    mbedtls_asn1_buf *salt, int *iterations)
 {
+    if(params == NULL) 
+    {
+        return -1;
+    }
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
     unsigned char **p = &params->p;
     const unsigned char *end = params->p + params->len;
@@ -80,16 +82,16 @@ static int pkcs12_parse_pbe_params(mbedtls_asn1_buf *params,
     if ((ret = mbedtls_asn1_get_int(p, end, iterations)) != 0) {
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PKCS12_PBE_INVALID_FORMAT, ret);
     }
-
+/*
     if (*p != end) {
         return MBEDTLS_ERROR_ADD(MBEDTLS_ERR_PKCS12_PBE_INVALID_FORMAT,
                                  MBEDTLS_ERR_ASN1_LENGTH_MISMATCH);
     }
-
+*/
     return 0;
 }
 
-#define PKCS12_MAX_PWDLEN 128
+#define PKCS12_MAX_PWDLEN 256
 
 static int pkcs12_pbe_derive_key_iv(mbedtls_asn1_buf *pbe_params, mbedtls_md_type_t md_type,
                                     const unsigned char *pwd,  size_t pwdlen,
