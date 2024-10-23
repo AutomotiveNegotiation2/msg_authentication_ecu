@@ -58,6 +58,8 @@
 #include "mbedtls/pk.h"
 #include "common.h"
 
+#define MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED
+
 /* Shorthand for restartable ECC */
 #if defined(MBEDTLS_ECP_RESTARTABLE) && \
     defined(MBEDTLS_SSL_CLI_C) && \
@@ -70,6 +72,9 @@
 #define MBEDTLS_SSL_RENEGOTIATION_IN_PROGRESS   1   /* In progress */
 #define MBEDTLS_SSL_RENEGOTIATION_DONE          2   /* Done or aborted */
 #define MBEDTLS_SSL_RENEGOTIATION_PENDING       3   /* Requested (server only) */
+#define MBEDTLS_SSL_READY_HANDSHAKE             4    
+#define MBEDTLS_SSL_TIMEOUT_HANDSHAKE           5
+
 
 /* Faked handshake message identity for HelloRetryRequest. */
 #define MBEDTLS_SSL_TLS1_3_HS_HELLO_RETRY_REQUEST (-MBEDTLS_SSL_HS_SERVER_HELLO)
@@ -77,37 +82,37 @@
 /*
  * Internal identity of handshake extensions
  */
-#define MBEDTLS_SSL_EXT_ID_UNRECOGNIZED                0
-#define MBEDTLS_SSL_EXT_ID_SERVERNAME                  1
-#define MBEDTLS_SSL_EXT_ID_SERVERNAME_HOSTNAME         1
-#define MBEDTLS_SSL_EXT_ID_MAX_FRAGMENT_LENGTH         2
-#define MBEDTLS_SSL_EXT_ID_STATUS_REQUEST              3
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_GROUPS            4
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_ELLIPTIC_CURVES   4
-#define MBEDTLS_SSL_EXT_ID_SIG_ALG                     5
-#define MBEDTLS_SSL_EXT_ID_USE_SRTP                    6
-#define MBEDTLS_SSL_EXT_ID_HEARTBEAT                   7
-#define MBEDTLS_SSL_EXT_ID_ALPN                        8
-#define MBEDTLS_SSL_EXT_ID_SCT                         9
-#define MBEDTLS_SSL_EXT_ID_CLI_CERT_TYPE              10
-#define MBEDTLS_SSL_EXT_ID_SERV_CERT_TYPE             11
-#define MBEDTLS_SSL_EXT_ID_PADDING                    12
-#define MBEDTLS_SSL_EXT_ID_PRE_SHARED_KEY             13
-#define MBEDTLS_SSL_EXT_ID_EARLY_DATA                 14
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_VERSIONS         15
-#define MBEDTLS_SSL_EXT_ID_COOKIE                     16
-#define MBEDTLS_SSL_EXT_ID_PSK_KEY_EXCHANGE_MODES     17
-#define MBEDTLS_SSL_EXT_ID_CERT_AUTH                  18
-#define MBEDTLS_SSL_EXT_ID_OID_FILTERS                19
-#define MBEDTLS_SSL_EXT_ID_POST_HANDSHAKE_AUTH        20
-#define MBEDTLS_SSL_EXT_ID_SIG_ALG_CERT               21
-#define MBEDTLS_SSL_EXT_ID_KEY_SHARE                  22
-#define MBEDTLS_SSL_EXT_ID_TRUNCATED_HMAC             23
-#define MBEDTLS_SSL_EXT_ID_SUPPORTED_POINT_FORMATS    24
-#define MBEDTLS_SSL_EXT_ID_ENCRYPT_THEN_MAC           25
-#define MBEDTLS_SSL_EXT_ID_EXTENDED_MASTER_SECRET     26
-#define MBEDTLS_SSL_EXT_ID_SESSION_TICKET             27
-#define MBEDTLS_SSL_EXT_ID_RECORD_SIZE_LIMIT          28
+#define MBEDTLS_SSL_EXT_ID_UNRECOGNIZED                0U
+#define MBEDTLS_SSL_EXT_ID_SERVERNAME                  1U
+#define MBEDTLS_SSL_EXT_ID_SERVERNAME_HOSTNAME         1U
+#define MBEDTLS_SSL_EXT_ID_MAX_FRAGMENT_LENGTH         2U
+#define MBEDTLS_SSL_EXT_ID_STATUS_REQUEST              3U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_GROUPS            4U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_ELLIPTIC_CURVES   4U
+#define MBEDTLS_SSL_EXT_ID_SIG_ALG                     5U
+#define MBEDTLS_SSL_EXT_ID_USE_SRTP                    6U
+#define MBEDTLS_SSL_EXT_ID_HEARTBEAT                   7U
+#define MBEDTLS_SSL_EXT_ID_ALPN                        8U
+#define MBEDTLS_SSL_EXT_ID_SCT                         9U
+#define MBEDTLS_SSL_EXT_ID_CLI_CERT_TYPE              10U
+#define MBEDTLS_SSL_EXT_ID_SERV_CERT_TYPE             11U
+#define MBEDTLS_SSL_EXT_ID_PADDING                    12U
+#define MBEDTLS_SSL_EXT_ID_PRE_SHARED_KEY             13U
+#define MBEDTLS_SSL_EXT_ID_EARLY_DATA                 14U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_VERSIONS         15U
+#define MBEDTLS_SSL_EXT_ID_COOKIE                     16U
+#define MBEDTLS_SSL_EXT_ID_PSK_KEY_EXCHANGE_MODES     17U
+#define MBEDTLS_SSL_EXT_ID_CERT_AUTH                  18U
+#define MBEDTLS_SSL_EXT_ID_OID_FILTERS                19U
+#define MBEDTLS_SSL_EXT_ID_POST_HANDSHAKE_AUTH        20U
+#define MBEDTLS_SSL_EXT_ID_SIG_ALG_CERT               21U
+#define MBEDTLS_SSL_EXT_ID_KEY_SHARE                  22U
+#define MBEDTLS_SSL_EXT_ID_TRUNCATED_HMAC             23U
+#define MBEDTLS_SSL_EXT_ID_SUPPORTED_POINT_FORMATS    24U
+#define MBEDTLS_SSL_EXT_ID_ENCRYPT_THEN_MAC           25U
+#define MBEDTLS_SSL_EXT_ID_EXTENDED_MASTER_SECRET     26U
+#define MBEDTLS_SSL_EXT_ID_SESSION_TICKET             27U
+#define MBEDTLS_SSL_EXT_ID_RECORD_SIZE_LIMIT          28U
 
 /* Utility for translating IANA extension type. */
 uint32_t mbedtls_ssl_get_extension_id(unsigned int extension_type);
@@ -250,10 +255,11 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
  *
  * Note: initial state is wrong for server, but is not used anyway.
  */
-#define MBEDTLS_SSL_RETRANS_PREPARING       0
-#define MBEDTLS_SSL_RETRANS_SENDING         1
-#define MBEDTLS_SSL_RETRANS_WAITING         2
-#define MBEDTLS_SSL_RETRANS_FINISHED        3
+#define MBEDTLS_SSL_RETRANS_PREPARING       0U
+#define MBEDTLS_SSL_RETRANS_SENDING         1U
+#define MBEDTLS_SSL_RETRANS_WAITING         2U
+#define MBEDTLS_SSL_RETRANS_FINISHED        3U
+#define MBEDTLS_SSL_RETRANS_RECEIVING       4U
 
 /*
  * Allow extra bytes for record, authentication and encryption overhead:
@@ -307,13 +313,13 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 #endif
 #else /* MBEDTLS_SSL_SOME_SUITES_USE_MAC */
 /* AEAD ciphersuites: GCM and CCM use a 128 bits tag */
-#define MBEDTLS_SSL_MAC_ADD                 16
+#define MBEDTLS_SSL_MAC_ADD                 32
 #endif
 
 #if defined(MBEDTLS_CIPHER_MODE_CBC)
-#define MBEDTLS_SSL_PADDING_ADD            256
+#define MBEDTLS_SSL_PADDING_ADD            128
 #else
-#define MBEDTLS_SSL_PADDING_ADD              0
+#define MBEDTLS_SSL_PADDING_ADD              0x5A
 #endif
 
 #if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
@@ -335,7 +341,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
                                      (MBEDTLS_SSL_OUT_CONTENT_LEN))
 
 /* The maximum number of buffered handshake messages. */
-#define MBEDTLS_SSL_MAX_BUFFERED_HS 4
+#define MBEDTLS_SSL_MAX_BUFFERED_HS 6
 
 /* Maximum length we can advertise as our max content length for
    RFC 6066 max_fragment_length extension negotiation purposes
@@ -348,15 +354,22 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
         )
 
 /* Maximum size in bytes of list in signature algorithms ext., RFC 5246/8446 */
+#define MBEDTLS_SSL_MIN_SIG_ALG_LIST_LEN       254
 #define MBEDTLS_SSL_MAX_SIG_ALG_LIST_LEN       65534
 
 /* Minimum size in bytes of list in signature algorithms ext., RFC 5246/8446 */
 #define MBEDTLS_SSL_MIN_SIG_ALG_LIST_LEN       2
+#define MBEDTLS_SSL_MAX_SIG_ALG_LIST_LEN       32
 
 /* Maximum size in bytes of list in supported elliptic curve ext., RFC 4492 */
 #define MBEDTLS_SSL_MAX_CURVE_LIST_LEN         65535
+#define MBEDTLS_SSL_MIN_CURVE_LIST_LEN         255
 
+#define MBEDTLS_RECEIVED_VERI_ALGS_SIZE        200
 #define MBEDTLS_RECEIVED_SIG_ALGS_SIZE         20
+#define MBEDTLS_SEND_VERI_ALGS_SIZE            200
+#define MBEDTLS_SEND_SIG_ALGS_SIZE             20
+
 
 #if defined(MBEDTLS_SSL_HANDSHAKE_WITH_CERT_ENABLED)
 
@@ -382,11 +395,11 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
 #error "Bad configuration - outgoing record content too large."
 #endif
 
-#if MBEDTLS_SSL_IN_PAYLOAD_LEN > MBEDTLS_SSL_IN_CONTENT_LEN + 2048
+#if MBEDTLS_SSL_IN_PAYLOAD_LEN > (MBEDTLS_SSL_IN_CONTENT_LEN + 2048)
 #error "Bad configuration - incoming protected record payload too large."
 #endif
 
-#if MBEDTLS_SSL_OUT_PAYLOAD_LEN > MBEDTLS_SSL_OUT_CONTENT_LEN + 2048
+#if MBEDTLS_SSL_OUT_PAYLOAD_LEN > (MBEDTLS_SSL_OUT_CONTENT_LEN + 2048)
 #error "Bad configuration - outgoing protected record payload too large."
 #endif
 
@@ -396,6 +409,7 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
    long, we're internally using 8 bytes to store the
    implicit sequence number. */
 #define MBEDTLS_SSL_HEADER_LEN 13
+#define MBEDTLS_SSL_HEADER_TEST_LEN 26
 
 #if !defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
 #define MBEDTLS_SSL_IN_BUFFER_LEN  \
@@ -415,8 +429,10 @@ uint32_t mbedtls_ssl_get_extension_mask(unsigned int extension_type);
      + (MBEDTLS_SSL_CID_OUT_LEN_MAX))
 #endif
 
+#define MBEDTLS_TEST_HELLO_RANDOM_LEN   32
 #define MBEDTLS_CLIENT_HELLO_RANDOM_LEN 32
 #define MBEDTLS_SERVER_HELLO_RANDOM_LEN 32
+#define MBEDTLS_HELLO_RANDOM_LEN        (MBEDTLS_CLIENT_HELLO_RANDOM_LEN + MBEDTLS_SERVER_HELLO_RANDOM_LEN)
 
 #if defined(MBEDTLS_SSL_MAX_FRAGMENT_LENGTH)
 /**
@@ -484,6 +500,7 @@ static inline size_t mbedtls_ssl_get_input_buflen(const mbedtls_ssl_context *ctx
  */
 #define MBEDTLS_TLS_EXT_SUPPORTED_POINT_FORMATS_PRESENT (1 << 0)
 #define MBEDTLS_TLS_EXT_ECJPAKE_KKPP_OK                 (1 << 1)
+#define MBEDTLS_TLS_EXT_REMOVED_POINT_FORMATS_PRESENT   (1 << 2)
 
 /**
  * \brief        This function checks if the remaining size in a buffer is
@@ -596,9 +613,14 @@ typedef int  mbedtls_ssl_tls_prf_cb(const unsigned char *secret, size_t slen,
  * we content ourselves with replicating those overapproximations
  * for the maximum block and IV length, and excluding XTS from the
  * computation of the maximum key length. */
-#define MBEDTLS_SSL_MAX_BLOCK_LENGTH 16
-#define MBEDTLS_SSL_MAX_IV_LENGTH    16
-#define MBEDTLS_SSL_MAX_KEY_LENGTH   32
+#define MBEDTLS_SSL_MIN_BLOCK_LENGTH    2
+#define MBEDTLS_SSL_MAX_BLOCK_LENGTH    16
+#define MBEDTLS_SSL_MIN_IV_LENGTH       2
+#define MBEDTLS_SSL_MAX_IV_LENGTH       16
+#define MBEDTLS_SSL_MIN_KEY_LENGTH      2
+#define MBEDTLS_SSL_MAX_KEY_LENGTH      32
+#define MBEDTLS_SSL_MIN_SEED_LENGTH     32
+#define MBEDTLS_SSL_MAX_SEED_LENGTH     64
 
 /**
  * \brief   The data structure holding the cryptographic material (key and IV)
@@ -614,15 +636,23 @@ struct mbedtls_ssl_key_set {
     /*! The IV  for server->client records. */
     unsigned char server_write_iv[MBEDTLS_SSL_MAX_IV_LENGTH];
 
+    unsigned char test_write_key[MBEDTLS_SSL_MAX_KEY_LENGTH];
+    unsigned char test_write_iv[MBEDTLS_SSL_MAX_IV_LENGTH];
+
+    size_t key_min_len;
     size_t key_len; /*!< The length of client_write_key and
                      *   server_write_key, in Bytes. */
+    size_t key_max_len;
+    size_t iv_min_len;
     size_t iv_len;  /*!< The length of client_write_iv and
                      *   server_write_iv, in Bytes. */
+    size_t iv_max_len;
 };
 typedef struct mbedtls_ssl_key_set mbedtls_ssl_key_set;
 
 typedef struct {
     unsigned char binder_key[MBEDTLS_TLS1_3_MD_MAX_SIZE];
+    unsigned char binder_key_index;
     unsigned char client_early_traffic_secret[MBEDTLS_TLS1_3_MD_MAX_SIZE];
     unsigned char early_exporter_master_secret[MBEDTLS_TLS1_3_MD_MAX_SIZE];
 } mbedtls_ssl_tls13_early_secrets;
@@ -639,6 +669,8 @@ struct mbedtls_ssl_handshake_params {
     /* Frequently-used boolean or byte fields (placed early to take
      * advantage of smaller code size for indirect access on Arm Thumb) */
     uint8_t resume;                     /*!<  session resume indicator*/
+    uint8_t suspend;                    /*!<  session suspend indicator*/
+    uint8_t ready;                      /*!<  session ready indicator*/
     uint8_t cli_exts;                   /*!< client extension presence*/
 
 #if defined(MBEDTLS_SSL_SERVER_NAME_INDICATION)
@@ -692,6 +724,8 @@ struct mbedtls_ssl_handshake_params {
 #if !defined(MBEDTLS_DEPRECATED_REMOVED)
     unsigned char group_list_heap_allocated;
     unsigned char sig_algs_heap_allocated;
+    unsigned char group_list_heap_freed;
+    unsigned char sig_algs_heap_freed;
 #endif
 
 #if defined(MBEDTLS_SSL_ECP_RESTARTABLE_ENABLED)
@@ -831,8 +865,11 @@ struct mbedtls_ssl_handshake_params {
             unsigned is_valid      : 1;
             unsigned is_fragmented : 1;
             unsigned is_complete   : 1;
+            unsigned is_ready      : 1;
+            unsigned is_timeout    : 1;
             unsigned char *data;
             size_t data_len;
+            size_t data_max_len;
         } hs[MBEDTLS_SSL_MAX_BUFFERED_HS];
 
         struct {
@@ -944,29 +981,34 @@ struct mbedtls_ssl_handshake_params {
         /* Outgoing Finished message */
         struct {
             uint8_t preparation_done;
+            uint8_t operation_done;
+            uint8_t verification_done;
 
             /* Buffer holding digest of the handshake up to
              * but excluding the outgoing finished message. */
             unsigned char digest[MBEDTLS_TLS1_3_MD_MAX_SIZE];
             size_t digest_len;
+            size_t digest_max_len;
         } finished_out;
 
         /* Incoming Finished message */
         struct {
             uint8_t preparation_done;
+            uint8_t operation_done;
+            uint8_t verification_done;
 
             /* Buffer holding digest of the handshake up to but
              * excluding the peer's incoming finished message. */
             unsigned char digest[MBEDTLS_TLS1_3_MD_MAX_SIZE];
             size_t digest_len;
+            size_t digest_index;
         } finished_in;
 
     } state_local;
 
     /* End of state-local variables. */
 
-    unsigned char randbytes[MBEDTLS_CLIENT_HELLO_RANDOM_LEN +
-                            MBEDTLS_SERVER_HELLO_RANDOM_LEN];
+    unsigned char randbytes[MBEDTLS_TEST_HELLO_RANDOM_LEN];
     /*!<  random bytes            */
 #if defined(MBEDTLS_SSL_PROTO_TLS1_2)
     unsigned char premaster[MBEDTLS_PREMASTER_SIZE];
@@ -1102,6 +1144,7 @@ struct mbedtls_ssl_transform {
      * Session specific crypto layer
      */
     size_t minlen;                      /*!<  min. ciphertext length  */
+    size_t maxlen;                      /*!<  max. ciphertext length  */
     size_t ivlen;                       /*!<  IV length               */
     size_t fixed_ivlen;                 /*!<  Fixed part of IV (AEAD) */
     size_t maclen;                      /*!<  MAC(CBC) len            */
@@ -1109,6 +1152,8 @@ struct mbedtls_ssl_transform {
 
     unsigned char iv_enc[16];           /*!<  IV (encryption)         */
     unsigned char iv_dec[16];           /*!<  IV (decryption)         */
+    unsigned char iv_test_enc[16];      /*!<  IV (test encryption)         */
+    unsigned char iv_test_dec[16];      /*!<  IV (test decryption)         */
 
 #if defined(MBEDTLS_SSL_SOME_SUITES_USE_MAC)
 
@@ -1214,8 +1259,10 @@ typedef struct {
 
     unsigned char *buf;     /* Memory buffer enclosing the record content    */
     size_t buf_len;         /* Buffer length                                 */
+    size_t buf_max_len;     /* Buffer max length                                 */
     size_t data_offset;     /* Offset of record content                      */
     size_t data_len;        /* Length of record content                      */
+    size_t data_max_len;
 
 #if defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)
     uint8_t cid_len;        /* Length of the CID (0 if not present)          */
@@ -1689,7 +1736,7 @@ static inline size_t mbedtls_ssl_in_hdr_len(const mbedtls_ssl_context *ssl)
     } else
 #endif /* MBEDTLS_SSL_PROTO_DTLS */
     {
-        return 5;
+        return 6;
     }
 }
 
@@ -2603,7 +2650,8 @@ typedef enum {
     MBEDTLS_SSL_MODE_STREAM = 0,
     MBEDTLS_SSL_MODE_CBC,
     MBEDTLS_SSL_MODE_CBC_ETM,
-    MBEDTLS_SSL_MODE_AEAD
+    MBEDTLS_SSL_MODE_AEAD,
+    MBEDTLS_SSL_MODE_MAX
 } mbedtls_ssl_mode_t;
 
 mbedtls_ssl_mode_t mbedtls_ssl_get_mode_from_transform(
