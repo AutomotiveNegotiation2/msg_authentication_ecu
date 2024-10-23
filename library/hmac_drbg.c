@@ -308,9 +308,11 @@ int mbedtls_hmac_drbg_seed_buf(mbedtls_hmac_drbg_context *ctx,
  * Comments starting with arabic numbers refer to section 10.1.2.4
  * of SP800-90A, while roman numbers refer to section 9.2.
  */
-static int hmac_drbg_reseed_core(mbedtls_hmac_drbg_context *ctx,
-                                 const unsigned char *additional, size_t len,
-                                 int use_nonce)
+static int hmac_drbg_reseed_core(
+        mbedtls_hmac_drbg_context   *ctx,
+        const unsigned char         *additional,
+        size_t                      len,
+        int                         use_nonce)
 {
     unsigned char seed[MBEDTLS_HMAC_DRBG_MAX_SEED_INPUT];
     size_t seedlen = 0;

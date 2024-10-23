@@ -142,6 +142,45 @@ static void ssl_tls13_hkdf_encode_label(
     *dst_len = total_hkdf_lbl_len;
 }
 
+static void ssl_tls13_hkdf_encode_label_test(
+    size_t                  desired_length,
+    const unsigned char     *label,
+    size_t                  label_len,
+    const unsigned char     *ctx,
+    size_t                  ctx_len,
+    unsigned char           *dst,
+    size_t                  *dst_len)
+{
+    size_t          total_label_len     = sizeof(tls13_label_prefix) + label_len;
+    size_t          total_hkdf_lbl_len  = SSL_TLS1_3_KEY_SCHEDULE_HKDF_LABEL_LEN(total_label_len, ctx_len);
+
+    unsigned char   *p                  = dst;
+
+    /* Add the size of the expanded key material.
+     * We're hardcoding the high byte to 0 here assuming that we never use
+     * TLS 1.3 HKDF key expansion to more than 255 Bytes. */
+#if MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN > 255
+#error "The implementation of ssl_tls13_hkdf_encode_label() is not fit for the \
+    value of MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN"
+#endif
+
+    *p++    = 0;
+    *p++    = MBEDTLS_BYTE_0(desired_length);
+
+    *p++    = MBEDTLS_BYTE_0(total_label_len);      /* Add label incl. prefix */
+    (void)memcpy(p, tls13_label_prefix, sizeof(tls13_label_prefix));
+    p       += sizeof(tls13_label_prefix);
+    (void)memcpy(p, label, label_len);
+    p       += label_len;
+
+    *p++    = MBEDTLS_BYTE_0(ctx_len);              /* Add context value */
+    if (ctx_len != 0U) {
+        (void)memcpy(p, ctx, ctx_len);
+    }
+
+    *dst_len    = total_hkdf_lbl_len;               /* Return total length to the caller.  */
+}
+
 int mbedtls_ssl_tls13_hkdf_expand_label(
     psa_algorithm_t hash_alg,
     const unsigned char *secret, size_t secret_len,
@@ -222,6 +261,90 @@ cleanup:
     return PSA_TO_MBEDTLS_ERR(status);
 }
 
+int mbedtls_ssl_tls13_hkdf_expand_label_test(
+    psa_algorithm_t         hash_alg,
+    const unsigned char     *secret,
+    size_t                  secret_len,
+    const unsigned char     *label,
+    size_t                  label_len,
+    const unsigned char     *ctx,
+    size_t                  ctx_len,
+    unsigned char           *buf,
+    size_t                  buf_len)
+{
+    unsigned char                   hkdf_label[SSL_TLS1_3_KEY_SCHEDULE_MAX_HKDF_LABEL_LEN];
+    size_t                          hkdf_label_len  = 0U;
+    psa_status_t                    status          = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_status_t                    abort_status    = PSA_ERROR_CORRUPTION_DETECTED;
+    psa_key_derivation_operation_t  operation       = PSA_KEY_DERIVATION_OPERATION_INIT;
+
+    if (label_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_LABEL_LEN) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "label_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_LABEL_LEN");
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;      /* Should never happen since this is an internal
+                                                     * function, and we know statically which labels
+                                                     * are allowed. */
+    }
+
+    if (ctx_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_CONTEXT_LEN) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "ctx_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_CONTEXT_LEN");
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;      /* Should not happen, as above. */
+    }
+
+    if (buf_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "buf_len > MBEDTLS_SSL_TLS1_3_KEY_SCHEDULE_MAX_EXPANSION_LEN");
+        return MBEDTLS_ERR_SSL_INTERNAL_ERROR;      /* Should not happen, as above. */
+    }
+
+    if (!PSA_ALG_IS_HASH(hash_alg)) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "PSA_ALG_IS_HASH(hash_alg");
+        return MBEDTLS_ERR_SSL_BAD_INPUT_DATA;
+    }
+
+    ssl_tls13_hkdf_encode_label(buf_len,
+                                label,      label_len,
+                                ctx,        ctx_len,
+                                hkdf_label, &hkdf_label_len);
+
+    status = psa_key_derivation_setup(&operation, PSA_ALG_HKDF_EXPAND(hash_alg));
+
+    if (status != PSA_SUCCESS) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "status != PSA_SUCCESS");
+        goto cleanup;
+    }
+
+    status = psa_key_derivation_input_bytes(&operation,
+                                            PSA_KEY_DERIVATION_INPUT_SECRET,
+                                            secret,
+                                            secret_len);
+
+    if (status != PSA_SUCCESS) {
+        goto cleanup;
+    }
+
+    status = psa_key_derivation_input_bytes(&operation,
+                                            PSA_KEY_DERIVATION_INPUT_INFO,
+                                            hkdf_label,
+                                            hkdf_label_len);
+
+    if (status != PSA_SUCCESS) {
+        goto cleanup;
+    }
+
+    status = psa_key_derivation_output_bytes(&operation,
+                                             buf,
+                                             buf_len);
+
+    if (status != PSA_SUCCESS) {
+        goto cleanup;
+    }
+
+cleanup:
+    abort_status    = psa_key_derivation_abort(&operation);
+    status          = (status == PSA_SUCCESS) ? abort_status : status;
+    mbedtls_platform_zeroize(hkdf_label, hkdf_label_len);
+    return PSA_TO_MBEDTLS_ERR(status);
+}
+
 MBEDTLS_CHECK_RETURN_CRITICAL
 static int ssl_tls13_make_traffic_key(
     psa_algorithm_t hash_alg,
@@ -247,6 +370,39 @@ static int ssl_tls13_make_traffic_key(
         MBEDTLS_SSL_TLS1_3_LBL_WITH_LEN(iv),
         NULL, 0,
         iv, iv_len);
+    return ret;
+}
+
+MBEDTLS_CHECK_RETURN_CRITICAL
+static int ssl_tls13_make_traffic_key_test(
+    psa_algorithm_t         hash_alg,
+    const unsigned char     *secret,    size_t      secret_len,
+    unsigned char           *key,       size_t      key_len,
+    unsigned char           *iv,        size_t      iv_len)
+{
+    int     ret     = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+
+    ret = mbedtls_ssl_tls13_hkdf_expand_label(
+            hash_alg,
+            secret,     secret_len,
+            MBEDTLS_SSL_TLS1_3_LBL_WITH_LEN(key),
+            NULL,       0,
+            key,        key_len);
+
+    if (ret != 0) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "bad return code was returned at mbedtls_ssl_tls13_hkdf_expand_label()");
+        return ret;
+    }
+
+    ret = mbedtls_ssl_tls13_hkdf_expand_label(
+            hash_alg,
+            secret,     secret_len,
+            MBEDTLS_SSL_TLS1_3_LBL_WITH_LEN(iv),
+            NULL,       0,
+            iv,         iv_len);
+
+    MBEDTLS_SSL_DEBUG_MSG(2, "ssl_tls13_make_traffic_key() was completed successfully.m");
+
     return ret;
 }
 
@@ -293,6 +449,42 @@ int mbedtls_ssl_tls13_make_traffic_keys(
 
     keys->key_len = key_len;
     keys->iv_len = iv_len;
+
+    return 0;
+}
+
+int mbedtls_ssl_tls13_make_traffic_keys_test(
+        psa_algorithm_t         hash_alg,
+        const unsigned char     *client_secret,
+        const unsigned char     *server_secret,     size_t      secret_len,
+        size_t                  key_len,            size_t      iv_len,
+        mbedtls_ssl_key_set     *keys)
+{
+    int     ret     = 0;
+
+    ret = ssl_tls13_make_traffic_key(
+            hash_alg,               client_secret,  secret_len,
+            keys->client_write_key, key_len,
+            keys->client_write_iv,  iv_len);
+
+    if (ret != 0) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "ssl_tls13_make_traffic_key() returned err code");
+        return ret;
+    }
+
+    ret = ssl_tls13_make_traffic_key(
+            hash_alg,               server_secret,  secret_len,
+            keys->server_write_key, key_len,
+            keys->server_write_iv,  iv_len);
+
+    if (ret != 0) {
+        MBEDTLS_SSL_DEBUG_MSG(2, "ssl_tls13_make_traffic_key() returned err code");
+        return ret;
+    }
+
+    MBEDTLS_SSL_DEBUG_MSG(2, "mbedtls_ssl_tls13_make_traffic_keys() was completed successfully.m");
+    keys->key_len   = key_len;
+    keys->iv_len    = iv_len;
 
     return 0;
 }
