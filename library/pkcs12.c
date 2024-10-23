@@ -101,6 +101,11 @@ static int pkcs12_pbe_derive_key_iv(mbedtls_asn1_buf *pbe_params, mbedtls_md_typ
     size_t i;
     unsigned char unipwd[PKCS12_MAX_PWDLEN * 2 + 2];
 
+    if(pbe_params == NULL)
+    {
+        return -1;
+    }
+    
     if (pwdlen > PKCS12_MAX_PWDLEN) {
         return MBEDTLS_ERR_PKCS12_BAD_INPUT_DATA;
     }
